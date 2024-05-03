@@ -1,0 +1,3 @@
+[submodule "42c-bank-master"]
+	path = 42c-bank-master
+	url = https://github.com/42c-presales/42c-bank.git
