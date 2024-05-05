@@ -1,0 +1,565 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "title" : "Open Bank Project API",
+    "description" : "An Open Source API for Banks. (c) TESOBE Ltd. 2011 - 2016. Licensed under the AGPL and commercial licences.",
+    "contact" : {
+      "name" : "TESOBE Ltd. / Open Bank Project",
+      "url" : "https://openbankproject.com"
+    },
+    "version" : "v4.0.0"
+  },
+  "host" : "bnpparibas-irb.openbankproject.com",
+  "basePath" : "/",
+  "schemes" : [ "https" ],
+  "produces" : [ "application/json" ],
+  "consumes" : [ "application/json" ],
+  "parameters" : {
+    "BANK_ID" : {
+      "name" : "BANK_ID",
+      "in" : "path",
+      "description" : "The bank identifier",
+      "type" : "string",
+      "enum" : [ "bnpp-irb.01.fr.fr", "bnpp-irb.01.uk.uk" ],
+      "required" : true
+    },
+    "ACCOUNT_ID" : {
+      "name" : "ACCOUNT_ID",
+      "in" : "path",
+      "required" : true,
+      "type" : "string",
+      "maxLength" : 15,
+      "pattern" : "^[a-zA-Z0-3]{5,15}$"
+    },
+    "VIEW_ID" : {
+      "name" : "VIEW_ID",
+      "in" : "path",
+      "required" : true,
+      "type" : "string",
+      "maxLength" : 10,
+      "pattern" : "^[a-zA-Z]{5,10}$"
+    },
+    "Authorization" : {
+      "name" : "Authorization",
+      "in" : "header",
+      "required" : true,
+      "type" : "string",
+      "maxLength" : 100,
+      "pattern" : "^(DirectLogin\\\\stoken=)([\\\\\"a-zA-Z0-9\\\\.]+)$"
+    }
+  },
+  "securityDefinitions" : {
+    "oauth" : {
+      "type" : "oauth2",
+      "flow" : "implicit",
+      "authorizationUrl" : "http://openbanking.42crunch.com/authorize",
+      "scopes" : {
+        "basic" : "to get basic information about an account and initiate tranfers",
+        "full" : "to retrieve all details (only for account owners)"
+      }
+    },
+    "key" : {
+      "type" : "apiKey",
+      "in" : "header",
+      "name" : "Authorization"
+    }
+  },
+  "security" : [ {
+    "oauth" : [ "basic", "full" ]
+  }, {
+    "key" : [ ]
+  } ],
+  "paths" : {
+    "/my/logins/direct" : {
+      "post" : {
+        "x-42c-no-authentication" : true,
+        "parameters" : [ {
+          "name" : "Authorization",
+          "in" : "header",
+          "type" : "string",
+          "required" : true,
+          "maxLength" : 150,
+          "description" : "Direct Login Data",
+          "pattern" : "^(DirectLogin\\s)([a-zA-Z0-9\\s\\.\"_\\-,=]+)$"
+        } ],
+        "description" : "Direct login",
+        "responses" : {
+          "201" : {
+            "description" : "Successful Login",
+            "schema" : {
+              "$ref" : "#/definitions/DirectLoginDTO"
+            }
+          }
+        }
+      }
+    },
+    "/obp/v2.0.0/banks/{BANK_ID}/accounts/{ACCOUNT_ID}/{VIEW_ID}/account" : {
+      "get" : {
+        "security" : [ {
+          "key" : [ ]
+        }, {
+          "oauth" : [ "full" ]
+        } ],
+        "parameters" : [ {
+          "$ref" : "#/parameters/BANK_ID"
+        }, {
+          "$ref" : "#/parameters/ACCOUNT_ID"
+        }, {
+          "$ref" : "#/parameters/VIEW_ID"
+        } ],
+        "summary" : "Get Account by Id (Full)",
+        "description" : "<p>Information returned about an account specified by ACCOUNT_ID as moderated by the view (VIEW_ID):</p><ul>  <li>Number</li> <li>Owners</li>  <li>Type</li>  <li>Balance</li>  <li>IBAN</li> <li>Available views (sorted by short_name)</li></ul><p>More details about the data moderation by the view <a href=\"#1_2_1-getViewsForBankAccount\">here</a>.</p><p>PSD2 Context: PSD2 requires customers to have access to their account information via third party applications. This call provides balance and other account information via delegated authenticaiton using OAuth.</p><p>OAuth authentication is required if the 'is_public' field in view (VIEW_ID) is not set to <code>true</code>.</p>",
+        "operationId" : "2_0_0-accountById",
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "schema" : {
+              "$ref" : "#/definitions/GetAccountResponse"
+            }
+          },
+          "400" : {
+            "description" : "Error",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          },
+          "401" : {
+            "description" : "Error",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/obp/v2.0.0/banks/{BANK_ID}/accounts/{ACCOUNT_ID}/{VIEW_ID}/transaction-request-types/{TRANSACTION_REQUEST_TYPE}/transaction-requests" : {
+      "post" : {
+        "security" : [ {
+          "key" : [ ]
+        }, {
+          "oauth" : [ "basic" ]
+        } ],
+        "parameters" : [ {
+          "$ref" : "#/parameters/BANK_ID"
+        }, {
+          "$ref" : "#/parameters/ACCOUNT_ID"
+        }, {
+          "$ref" : "#/parameters/VIEW_ID"
+        }, {
+          "name" : "TRANSACTION_REQUEST_TYPE",
+          "in" : "path",
+          "required" : true,
+          "type" : "string",
+          "enum" : [ "SANDBOX_TAN", "INTRABANK" ]
+        }, {
+          "name" : "transaction",
+          "in" : "body",
+          "required" : true,
+          "description" : "Target Transaction Account.",
+          "schema" : {
+            "$ref" : "#/definitions/TransactionRequest"
+          }
+        } ],
+        "summary" : "Create Transaction Request.",
+        "description" : "<p>Initiate a Payment via a Transaction Request.</p><p>This is the preferred method to create a payment and supersedes makePayment in 1.2.1.</p><p>PSD2 Context: Third party access access to payments is a core tenent of PSD2.</p><p>This call satisfies that requirement from several perspectives:</p><p>1) A transaction can be initiated by a third party application.</p><p>2) The customer is informed of the charge that will incurred.</p><p>3) The call uses delegated authentication (OAuth)</p><p>See <a href=\"https://github.com/OpenBankProject/Hello-OBP-DirectLogin-Python/blob/master/hello_payments.py\">this python code</a> for a complete example of this flow.</p><p>In sandbox mode, if the amount is less than 100 (any currency), the transaction request will create a transaction without a challenge, else a challenge will need to be answered.</p><p>You can transfer between different currency accounts. (new in 2.0.0). The currency in body must match the sending account.</p><p>Currently TRANSACTION_REQUEST_TYPE must be set to SANDBOX_TAN</p><p>The following static FX rates are available in sandbox mode:</p><p>{  \"GBP\":{  \"AED\":5.22,  \"INR\":94.66,  \"JPY\":154.47, \"USD\":1.42,  \"EUR\":1.26  },  \"AED\":{  \"GBP\":0.19,  \"INR\":18.15, \"JPY\":29.61,  \"USD\":0.27,  \"EUR\":0.24  },  \"INR\":{  \"GBP\":0.011, \"AED\":0.055,  \"JPY\":1.63,  \"USD\":0.015,  \"EUR\":0.013  },  \"JPY\":{ \"GBP\":0.0065,  \"AED\":0.034,  \"INR\":0.61,  \"USD\":0.0092,  \"EUR\":0.0081 },  \"USD\":{  \"GBP\":0.7,  \"AED\":3.67,  \"INR\":66.65,  \"JPY\":108.77, \"EUR\":0.89  },  \"EUR\":{  \"GBP\":0.79,  \"AED\":4.14,  \"INR\":75.2, \"JPY\":122.71,  \"USD\":1.13  } }</p><p>The payer is set in the URL. Money comes out of the BANK_ID and ACCOUNT_ID specified in the URL</p><p>The payee is set in the request body. Money goes into the BANK_ID and ACCOUNT_IDO specified in the request body.</p><p>Authentication is Mandatory</p>",
+        "operationId" : "2_0_0-createTransactionRequest",
+        "responses" : {
+          "201" : {
+            "description" : "Success",
+            "schema" : {
+              "$ref" : "#/definitions/TransactionRequestResponse"
+            }
+          },
+          "400" : {
+            "description" : "Error",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          },
+          "401" : {
+            "description" : "Error",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "DirectLoginDTO" : {
+      "type" : "object",
+      "properties" : {
+        "token" : {
+          "type" : "string",
+          "maxLength" : 50
+        }
+      },
+      "required" : [ "token" ]
+    },
+    "Error" : {
+      "type" : "object",
+      "required" : [ "code", "message" ],
+      "properties" : {
+        "code" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "message" : {
+          "type" : "string"
+        }
+      }
+    },
+    "GetAccountResponse" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "label" : {
+          "type" : "null"
+        },
+        "number" : {
+          "type" : "string"
+        },
+        "owners" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object",
+            "properties" : {
+              "id" : {
+                "type" : "string"
+              },
+              "provider" : {
+                "type" : "null"
+              },
+              "display_name" : {
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "type" : {
+          "type" : "null"
+        },
+        "balance" : {
+          "type" : "object",
+          "properties" : {
+            "currency" : {
+              "type" : "string"
+            },
+            "amount" : {
+              "type" : "string"
+            }
+          }
+        },
+        "IBAN" : {
+          "type" : "null"
+        },
+        "swift_bic" : {
+          "type" : "null"
+        },
+        "views_available" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object",
+            "properties" : {
+              "id" : {
+                "type" : "string"
+              },
+              "short_name" : {
+                "type" : "string"
+              },
+              "description" : {
+                "type" : "string"
+              },
+              "is_public" : {
+                "type" : "boolean"
+              },
+              "alias" : {
+                "type" : "string"
+              },
+              "hide_metadata_if_alias_used" : {
+                "type" : "boolean"
+              },
+              "can_add_comment" : {
+                "type" : "boolean"
+              },
+              "can_add_corporate_location" : {
+                "type" : "boolean"
+              },
+              "can_add_image" : {
+                "type" : "boolean"
+              },
+              "can_add_image_url" : {
+                "type" : "boolean"
+              },
+              "can_add_more_info" : {
+                "type" : "boolean"
+              },
+              "can_add_open_corporates_url" : {
+                "type" : "boolean"
+              },
+              "can_add_physical_location" : {
+                "type" : "boolean"
+              },
+              "can_add_private_alias" : {
+                "type" : "boolean"
+              },
+              "can_add_public_alias" : {
+                "type" : "boolean"
+              },
+              "can_add_tag" : {
+                "type" : "boolean"
+              },
+              "can_add_url" : {
+                "type" : "boolean"
+              },
+              "can_add_where_tag" : {
+                "type" : "boolean"
+              },
+              "can_delete_comment" : {
+                "type" : "boolean"
+              },
+              "can_delete_corporate_location" : {
+                "type" : "boolean"
+              },
+              "can_delete_image" : {
+                "type" : "boolean"
+              },
+              "can_delete_physical_location" : {
+                "type" : "boolean"
+              },
+              "can_delete_tag" : {
+                "type" : "boolean"
+              },
+              "can_delete_where_tag" : {
+                "type" : "boolean"
+              },
+              "can_edit_owner_comment" : {
+                "type" : "boolean"
+              },
+              "can_see_bank_account_balance" : {
+                "type" : "boolean"
+              },
+              "can_see_bank_account_bank_name" : {
+                "type" : "boolean"
+              },
+              "can_see_bank_account_currency" : {
+                "type" : "boolean"
+              },
+              "can_see_bank_account_iban" : {
+                "type" : "boolean"
+              },
+              "can_see_bank_account_label" : {
+                "type" : "boolean"
+              },
+              "can_see_bank_account_national_identifier" : {
+                "type" : "boolean"
+              },
+              "can_see_bank_account_number" : {
+                "type" : "boolean"
+              },
+              "can_see_bank_account_owners" : {
+                "type" : "boolean"
+              },
+              "can_see_bank_account_swift_bic" : {
+                "type" : "boolean"
+              },
+              "can_see_bank_account_type" : {
+                "type" : "boolean"
+              },
+              "can_see_comments" : {
+                "type" : "boolean"
+              },
+              "can_see_corporate_location" : {
+                "type" : "boolean"
+              },
+              "can_see_image_url" : {
+                "type" : "boolean"
+              },
+              "can_see_images" : {
+                "type" : "boolean"
+              },
+              "can_see_more_info" : {
+                "type" : "boolean"
+              },
+              "can_see_open_corporates_url" : {
+                "type" : "boolean"
+              },
+              "can_see_other_account_bank_name" : {
+                "type" : "boolean"
+              },
+              "can_see_other_account_iban" : {
+                "type" : "boolean"
+              },
+              "can_see_other_account_kind" : {
+                "type" : "boolean"
+              },
+              "can_see_other_account_metadata" : {
+                "type" : "boolean"
+              },
+              "can_see_other_account_national_identifier" : {
+                "type" : "boolean"
+              },
+              "can_see_other_account_number" : {
+                "type" : "boolean"
+              },
+              "can_see_other_account_swift_bic" : {
+                "type" : "boolean"
+              },
+              "can_see_owner_comment" : {
+                "type" : "boolean"
+              },
+              "can_see_physical_location" : {
+                "type" : "boolean"
+              },
+              "can_see_private_alias" : {
+                "type" : "boolean"
+              },
+              "can_see_public_alias" : {
+                "type" : "boolean"
+              },
+              "can_see_tags" : {
+                "type" : "boolean"
+              },
+              "can_see_transaction_amount" : {
+                "type" : "boolean"
+              },
+              "can_see_transaction_balance" : {
+                "type" : "boolean"
+              },
+              "can_see_transaction_currency" : {
+                "type" : "boolean"
+              },
+              "can_see_transaction_description" : {
+                "type" : "boolean"
+              },
+              "can_see_transaction_finish_date" : {
+                "type" : "boolean"
+              },
+              "can_see_transaction_metadata" : {
+                "type" : "boolean"
+              },
+              "can_see_transaction_other_bank_account" : {
+                "type" : "boolean"
+              },
+              "can_see_transaction_start_date" : {
+                "type" : "boolean"
+              },
+              "can_see_transaction_this_bank_account" : {
+                "type" : "boolean"
+              },
+              "can_see_transaction_type" : {
+                "type" : "boolean"
+              },
+              "can_see_url" : {
+                "type" : "boolean"
+              },
+              "can_see_where_tag" : {
+                "type" : "boolean"
+              }
+            }
+          }
+        },
+        "bank_id" : {
+          "type" : "string"
+        }
+      }
+    },
+    "TransactionRequest" : {
+      "type" : "object",
+      "additionalProperties" : false,
+      "required" : [ "to", "value", "description" ],
+      "properties" : {
+        "to" : {
+          "type" : "object",
+          "properties" : {
+            "bank_id" : {
+              "type" : "string",
+              "enum" : [ "bnpp-irb.01.fr.fr", "bnpp-irb.01.uk.uk" ]
+            },
+            "account_id" : {
+              "type" : "string",
+              "maxLength" : 15,
+              "pattern" : "^[a-zA-Z0-3]{5,15}$"
+            }
+          }
+        },
+        "value" : {
+          "type" : "object",
+          "properties" : {
+            "currency" : {
+              "type" : "string",
+              "enum" : [ "EUR", "USD" ]
+            },
+            "amount" : {
+              "type" : "string",
+              "maxLength" : 5
+            }
+          }
+        },
+        "description" : {
+          "type" : "string",
+          "maxLength" : 200
+        }
+      }
+    },
+    "TransactionRequestResponse" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "type" : {
+          "type" : "string"
+        },
+        "from" : {
+          "type" : "object",
+          "properties" : {
+            "bank_id" : {
+              "type" : "string"
+            },
+            "account_id" : {
+              "type" : "string"
+            }
+          }
+        },
+        "transaction_ids" : {
+          "type" : "string"
+        },
+        "status" : {
+          "type" : "string"
+        },
+        "start_date" : {
+          "type" : "string"
+        },
+        "end_date" : {
+          "type" : "string"
+        },
+        "challenge" : {
+          "type" : "null"
+        },
+        "charge" : {
+          "type" : "object",
+          "properties" : {
+            "summary" : {
+              "type" : "string"
+            },
+            "value" : {
+              "type" : "object",
+              "properties" : {
+                "currency" : {
+                  "type" : "string"
+                },
+                "amount" : {
+                  "type" : "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
