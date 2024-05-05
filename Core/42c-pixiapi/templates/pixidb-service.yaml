@@ -1,0 +1,14 @@
+# the Pixi app uses a Mongo DB database to store users, pictures and other metadata.
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: pixidb
+  name: pixidb
+spec:
+  ports:
+  - name: "mongo"
+    port: {{ .Values.pixidb.listen_port | default 27017 }}
+    targetPort: {{ .Values.pixidb.listen_port | default 27017 }}
+  selector:
+    app: {{ .Release.Name }}-pixidb

@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-pixidb
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-pixidb
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-pixidb
+{{ include "42c-pixiapi.labels" . | indent 8 }}
+
+    spec:
+      containers:
+      - name: {{ .Release.Name }}-pixidb
+        image: {{ .Values.pixidb.repository }}:{{ .Values.pixidb.version }}
+        imagePullPolicy: {{ .Values.pixidb.pullPolicy | quote }}
+        ports:
+          - containerPort: {{ .Values.pixidb.listen_port | default 27017 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-pixi
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-pixiapp
+  replicas: {{ .Values.pixiapp.replicas }}
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-pixiapp
+{{ include "42c-pixiapi.labels" . | indent 8 }}
+{{ if .Values.pixiapp.inject_firewall }}
+        firewall-injection: enabled
+      annotations:
+        xliic.com/protection-token: "apifirewall-protection-token"
+        xliic.com/http-only: "enabled"
+        xliic.com/container-port: "8080"
+        xliic.com/inject-secret-env-jwk: "jwt-keys/pixirsa.jwk"
+        xliic.com/env-configmap: "apifirewall-props"
+        xliic.com/logs-to-volume: "apifirewall-logs"
+        xliic.com/target-url: {{ .Values.firewall.target_url }}
+        xliic.com/server-name: {{ .Values.firewall.server_name }}
+{{end}}
+    spec:
+      nodeSelector:
+        target: apis
+      containers:
+      - name: {{ .Release.Name }}-pixiapp
+        image: {{ .Values.pixiapp.repository }}:{{ .Values.pixiapp.version }}
+        imagePullPolicy: {{ .Values.pixiapp.pullPolicy | quote }}
+        ports:
+          - containerPort: {{ .Values.pixiapp.pod_listen_port | default 8090 }}

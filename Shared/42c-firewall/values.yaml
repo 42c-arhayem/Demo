@@ -1,0 +1,24 @@
+# Default values for 42c-evalguide.
+# Declare variables to be passed into your templates.
+
+apifirewall:
+  log_level: warn
+  # Using this domain + release name as server name
+  server_name: photo-demo.westeurope.cloudapp.azure.com
+  # Transaction logs can be shipped to the PLATFORM or kept in FILES
+  log_destination: PLATFORM+STDOUT
+  pod_listen_port: 8080
+  # Pass the value of Host unchanged
+  preserve_host: Off
+  # Time to wait for incoming traffic (secs)
+  client_timeout: 60
+  # Time before a connection to back-end is recycled
+  keep_alive_timeout: 60
+  # URL for back-end API
+  backend_api_url: http://localhost:8090
+  #The name of the cert API firewall used for TLS configuration (PEM format)
+  firewall_tls_cert: tls.crt
+  # The name of the private key API firewall used for TLS configuration (PEM format)
+  firewall_tls_key: tls.key
+  http_only: "enabled"
+  configmap_name: "apifirewall-props"

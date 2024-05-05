@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: demo-ingress
+  namespace: {{ .Values.deployment.namespace }}
+  annotations:
+    # use the shared ingress-nginx
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    cert-manager.io/cluster-issuer: letsencrypt
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    name: rewrite
+spec:
+  tls:
+  - hosts:
+    - {{ .Values.deployment.hostname }}
+    secretName: tls-secret
+  rules:
+  - host: {{ .Values.deployment.hostname }}
+    http:
+      paths:
+      - path: /{{ .Values.deployment.prefix }}(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ .Release.Name }}-pixisvc
+            port:
+              number: {{ .Values.pixiapp.svc_listen_port }}

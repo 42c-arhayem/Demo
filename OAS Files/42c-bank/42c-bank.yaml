@@ -1,0 +1,23 @@
+name: '42c-bank'
+services:
+
+  database:
+    image: anthony42crunch/test42c:database
+    command: mongod --quiet --logpath /dev/null 
+    container_name: mongo-db
+    ports:
+      - '27017:27017'
+    environment:
+      MONGO_INITDB_DATABASE: 42c-bank-db
+    restart: always
+      
+  api:
+    image: anthony42crunch/test42c
+    container_name: 42c-bank-api
+    ports:
+      - '3000:3000'
+      - '443:443'
+    depends_on:
+      - database
+    restart: always
+    

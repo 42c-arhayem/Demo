@@ -1,0 +1,27 @@
+# Ingress to serve API
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: core-ingress
+  namespace: {{ .Values.deployment.namespace }}
+  annotations:
+    # use the shared ingress-nginx
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    kubernetes.io/ingress.allow-http: "false" # disable HTTP
+spec:
+  tls:
+  - hosts:
+    - {{ .Values.deployment.hostname | quote }}
+    secretName: {{ .Release.Name }}-api-tls
+  rules:
+  - host: {{ .Values.deployment.hostname }}
+    http:
+      paths:
+      - path: /(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ .Release.Name }}-pixisvc
+            port:
+              number: {{ .Values.pixiapp.svc_listen_port | default 8090 }}

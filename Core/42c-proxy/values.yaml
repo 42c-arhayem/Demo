@@ -1,0 +1,45 @@
+# Default values for 42c-proxy release.
+
+platform:
+  url: protection.demolabs.42crunch.cloud:8001
+
+image:
+  repository: 42crunch/apifirewall
+  version: v1.0.24
+  # replace latest by specific tag in prod environment.
+  pullPolicy: IfNotPresent
+
+apifirewall:
+  # URL for back-end API
+  backend_api_url: https://xliic-demo-api.eastus.cloudapp.azure.com
+  # Using this domain + release name as server name
+  server_name: xliic-demo-fw.eastus.cloudapp.azure.com
+  # Transaction logs can be shipped to the PLATFORM or kept in FILES
+  log_destination: PLATFORM+STDOUT
+  log_level: warn
+  # The port API Firewall pod listens on - Default is 8443
+  pod_listen_port: 8443
+  # The port API Firewall service listens on - Default is 443
+  svc_listen_port: 443
+  svc_externalIP: 52.249.188.92
+  # Pass the value of Host unchanged
+  preserve_host: 'off'
+  # Time to wait for incoming traffic (secs)
+  client_timeout: 60
+  # Time before a connection to back-end is recycled
+  keep_alive_timeout: 60
+  # Proxy timeout
+  proxy_timeout: 5
+  # TLS cert validation - We are talking to self-signed setup.
+  check_ssl_cert_hostname: 'off'
+  check_ssl_cert_expiration: 'on'
+
+  #The name of the cert API firewall used for TLS configuration (PEM format)
+  firewall_tls_cert: tls.crt
+  # The name of the private key API firewall used for TLS configuration (PEM format)
+  firewall_tls_key: tls.key
+  # Load Balancer Type
+  loadBalancerType: LoadBalancer
+  # External Traffic Policy
+  trafficPolicy: Local
+  protection_token: 6b634c9c-09da-40ff-9bc6-0a578cb48b66

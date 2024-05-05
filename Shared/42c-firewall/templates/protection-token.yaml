@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: apifirewall-protection-token
+  labels:
+{{ include "apifirewall.labels" . | indent 4 }}
+type: Opaque
+data:
+  PROTECTION_TOKEN: {{ .Values.apifirewall.protection_token | b64enc | quote }}
