@@ -21,4 +21,4 @@ apifirewall:
   # The name of the private key API firewall used for TLS configuration (PEM format)
   firewall_tls_key: tls.key
   http_only: "enabled"
-  configmap_name: "apifirewall-prop"
+  configmap_name: "apifirewall-props"
