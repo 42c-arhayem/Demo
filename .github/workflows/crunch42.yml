@@ -56,7 +56,7 @@ jobs:
           platform-url: https://demolabs.42crunch.cloud
           #default-collection-name: ImportFromGithub
           # Upload results to Github code scanning
-          upload-to-code-scanning: true
+          upload-to-code-scanning: false
           # Github token for uploading the results
           github-token: ${{ github.token }}
           sarif-report: sarif-audit-report-${{ github.run_id }}
