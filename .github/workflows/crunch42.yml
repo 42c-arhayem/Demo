@@ -53,7 +53,7 @@ jobs:
           # Fail if any OpenAPI file scores lower than 75
           min-score: 70
           #platform-url: https://platform.42crunch.com
-          platform-url: https://platform-gh.demolabs.42crunch.cloud
+          platform-url: https://demolabs.42crunch.cloud
           #default-collection-name: ImportFromGithub
           # Upload results to Github code scanning
           upload-to-code-scanning: true
