@@ -59,6 +59,7 @@ jobs:
           upload-to-code-scanning: false
           # Github token for uploading the results
           github-token: ${{ github.token }}
+          pdf-report: pdf-audit-report-${{ github.run_id }}
           sarif-report: sarif-audit-report-${{ github.run_id }}
           json-report: audit-action-report-${{ github.run_id }}
       - name: save-sarif-report
@@ -67,4 +68,18 @@ jobs:
         with:
           name: sarif-audit-report-${{ github.run_id }}
           path: sarif-audit-report-${{ github.run_id }}.sarif
+          if-no-files-found: error
+      - name: save-pdf-report
+        if: always()        
+        uses: actions/upload-artifact@v3
+        with:
+          name: pdf-audit-report-${{ github.run_id }}
+          path: pdf-audit-report-${{ github.run_id }}.sarif
+          if-no-files-found: error
+      - name: save-json-report
+        if: always()        
+        uses: actions/upload-artifact@v3
+        with:
+          name: audit-action-report-${{ github.run_id }}
+          path: audit-action-report-${{ github.run_id }}.sarif
           if-no-files-found: error
