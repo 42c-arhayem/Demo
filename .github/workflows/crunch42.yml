@@ -69,17 +69,3 @@ jobs:
           name: sarif-audit-report-${{ github.run_id }}
           path: sarif-audit-report-${{ github.run_id }}.sarif
           if-no-files-found: error
-      - name: save-pdf-report
-        if: always()        
-        uses: actions/upload-artifact@v3
-        with:
-          name: pdf-audit-report-${{ github.run_id }}
-          path: pdf-audit-report-${{ github.run_id }}.sarif
-          if-no-files-found: error
-      - name: save-json-report
-        if: always()        
-        uses: actions/upload-artifact@v3
-        with:
-          name: audit-action-report-${{ github.run_id }}
-          path: audit-action-report-${{ github.run_id }}.sarif
-          if-no-files-found: error
