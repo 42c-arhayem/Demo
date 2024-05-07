@@ -59,7 +59,6 @@ jobs:
           upload-to-code-scanning: false
           # Github token for uploading the results
           github-token: ${{ github.token }}
-          pdf-report: pdf-audit-report-${{ github.run_id }}
           sarif-report: sarif-audit-report-${{ github.run_id }}
           json-report: audit-action-report-${{ github.run_id }}
       - name: save-sarif-report
