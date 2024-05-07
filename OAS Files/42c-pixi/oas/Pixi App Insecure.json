@@ -14,7 +14,7 @@
     },
     "servers": [
         {
-            "url": "https://photo-demo.westeurope.cloudapp.azure.com/axl/api"
+            "url": "https://photo-demo.westeurope.cloudapp.azure.com/ali/api"
         }
     ],
     "tags": [
