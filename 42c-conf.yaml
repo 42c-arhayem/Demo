@@ -1,0 +1,6 @@
+audit:
+  branches:
+    main: 
+      discovery:
+        search:
+          - OASFiles/42c-pixi/oas/*.json
