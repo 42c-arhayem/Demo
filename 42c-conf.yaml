@@ -3,4 +3,4 @@ audit:
     main: 
       discovery:
         search:
-          - OASFiles/42c-pixi/oas/*.*
+          - OAS Files/42c-pixi/oas/*.*
