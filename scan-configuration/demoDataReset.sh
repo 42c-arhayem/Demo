@@ -37,7 +37,7 @@ if [ $? -eq 0 ]; then
             json_data_user_common='{"user": "userscan-run@acme.com","pass": "hellopixi","name": "User Common","is_admin": false,"account_balance": 1000}'
 
             # Invoke the API using curl with POST method and passing the JSON data
-            api_url="https://photo-demo.westeurope.cloudapp.azure.com/api/user/register"
+            api_url="https://photo-demo.westeurope.cloudapp.azure.com/ali/api/user/register"
             curl_response_inbound=$(curl -s -X POST -H "Content-Type: application/json" -d "$json_data_user_inbound" "$api_url")
             curl_response_common=$(curl -s -X POST -H "Content-Type: application/json" -d "$json_data_user_common" "$api_url")
 
