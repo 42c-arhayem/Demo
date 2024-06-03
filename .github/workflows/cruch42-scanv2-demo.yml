@@ -1,0 +1,14 @@
+name: "42Crunch REST API Dynamic Security Testing"
+
+on: pull_request
+jobs:
+  Run-Scan:
+    runs-on: ubuntu-latest
+    steps:
+    - id: Scan
+      run: | 
+        response=$(curl -k -d "user=pixiadmin@demo.mail&pass=adminpixi" -X POST https://photo-demo.westeurope.cloudapp.azure.com/ali/api/user/login | jq -r '.token')
+        echo "response from curl= $response"
+        
+        docker pull 42crunch/scand-agent:v2.0.0
+        docker run -e SCAN_TOKEN=scan_06b25bc0-b4c7-4293-a0f3-105ec9b93da0 -e SCAN42C_SECURITY_ACCESS_TOKEN=$response -e PLATFORM_SERVICE=services.demolabs.42crunch.cloud:8001 -e SCAN42C_user=userscan-run@acme.com -e SCAN42C_pass=hellopixi 42crunch/scand-agent:v2.0.0
