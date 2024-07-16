@@ -1,0 +1,52 @@
+# This is a sample GitLab CI/CD configuration file that should run without any modifications.
+#
+# A pipeline is composed of independent jobs that run scripts, grouped into stages.
+# Stages run in sequential order, but jobs within stages run in parallel.
+#
+# For more information, see: https://docs.gitlab.com/ee/ci/yaml/index.html#stages
+#
+# To contribute improvements to CI/CD templates, please follow the Development guide at:
+# https://docs.gitlab.com/ee/development/cicd/templates.html
+# This specific template is located at:
+# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
+
+stages:          # List of stages for jobs, and their order of execution
+  - audit
+  - test
+
+42c-audit:       # 42Crunch API Discovery and Audit job
+  stage: audit
+  image:
+    name: 42crunch/gitlab-api-security-audit:v3
+  variables:
+    X42C_PLATFORM_URL: https://demolabs.42crunch.cloud
+    X42C_JSON_REPORT: audit-action-report-$CI_PIPELINE_ID.json
+    X42C_LOG_LEVEL: DEBUG
+  script: 
+    - /audit/audit.sh
+  artifacts:
+    paths:
+      - audit-action-report-$CI_PIPELINE_ID.json
+    expire_in: "3 days"
+
+42c-scan:       # 42Crunch API Scan job
+  stage: test
+  dependencies:
+    - 42c-audit
+  before_script:
+    - apt-get -qq update
+    - apt-get install -y jq yq
+    - apt-get install -y python3 python3-pip
+    - apt-get install -y pipx
+  script:
+    - apiId=$(cat ./audit-action-report-$CI_PIPELINE_ID.json | jq -r '.audit.report."OASFiles/pixi.json".apiId') # Get API UUID from audit action report
+    - alias=$(cat ./.42c/conf.yaml | yq '.apis."OASFiles/pixi.json".alias') # Get Scan Config Alias name for the Pixi API from .42c/conf.yaml
+    - aliasId=$(sed -e 's/^"//' -e 's/"$//' <<< "$alias") # Remove quotes from alias
+    - python3 -m venv my-venv
+    - my-venv/bin/pip3 install requests
+    # Use scan_v2_config.py script to create a scan configuration from file scanconf.json
+    - scanconfig_response=$(my-venv/bin/python3 .42c/scripts/scan_v2_config.py --quiet $X42C_API_TOKEN $apiId -f .42c/scan/$aliasId/scanconf.json -n gitlab-pipeline -p https://demolabs.42crunch.cloud)
+    - echo $scanconfig_response # Print Scan token
+    - my-venv/bin/python3 .42c/scripts/scand-manager.py $scanconfig_response # Use scand-manager.py script to create a scan job
+    - echo "Check status of jobs here - https://photo-demo.westeurope.cloudapp.azure.com/scand/api/job"
+    - echo "Scan report - https://demolabs.42crunch.cloud/apis/$apiId/scan"
