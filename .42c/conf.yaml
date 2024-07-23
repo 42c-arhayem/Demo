@@ -1,3 +1,5 @@
 apis:
   OAS Files/Pixi App Good Scan.json:
     alias: pixi-app-good-scan
+  OAS Files/Pixi App Insecure.json:
+    alias: pixi-app-insecure

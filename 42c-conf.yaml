@@ -3,4 +3,6 @@ audit:
     main: 
       discovery:
         search:
-          - OAS Files/*.*
+          - OAS Files/Pixi\ App\ Good\ Scan\.json
+          - OAS Files/Pixi\ App\ Insecure\.json
+          - OAS Files/Pixi\ App\ Protect\.json
