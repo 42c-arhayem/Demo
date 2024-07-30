@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Run kubectl get pods command and store the output in a variable
-kubectl_output=$(kubectl get pods)
+kubectl_output=$(kubectl get pods -n ali)
 
 # Check if the kubectl command was successful
 if [ $? -eq 0 ]; then
@@ -15,7 +15,7 @@ if [ $? -eq 0 ]; then
 
         # Delete each of the pods containing "pixidb"
         for pod_name in $pod_names; do
-            kubectl delete pod "$pod_name"
+            kubectl delete pod "$pod_name" -n ali
             if [ $? -eq 0 ]; then
                 echo "Deleted pod: $pod_name"
             else
@@ -27,7 +27,7 @@ if [ $? -eq 0 ]; then
         sleep 10
 
         # Get the name of the newly created pod containing "pixidb"
-        new_pod_name=$(kubectl get pods | grep "pixidb" | awk '{print $1}' | head -n 1)
+        new_pod_name=$(kubectl get pods -n ali| grep "pixidb" | awk '{print $1}' | head -n 1)
 
         if [ -n "$new_pod_name" ]; then
             echo "New pod name: $new_pod_name"
@@ -48,14 +48,14 @@ if [ $? -eq 0 ]; then
                 echo "Common User: $curl_response_common"
 
                 # Extract the token from the JSON response using jq
-                token=$(echo "$curl_response_common" | jq -r '.token')
+             #   token=$(echo "$curl_response_common" | jq -r '.token')
 
-                if [ -n "$token" ]; then
-                    echo "Token to use as parameter SCAN42C_SECURITY_COMMON_ACCESS_TOKEN : $token"
-                    export PIXI_TOKEN="$token"
-                else
-                    echo "Error: Failed to extract token from API response."
-                fi
+             #   if [ -n "$token" ]; then
+             #       echo "Token to use as parameter SCAN42C_SECURITY_COMMON_ACCESS_TOKEN : $token"
+             #       export PIXI_TOKEN="$token"
+             #   else
+             #       echo "Error: Failed to extract token from API response."
+             #   fi
 
             else
                 echo "Error: Failed to invoke the API."
