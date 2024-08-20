@@ -1139,7 +1139,7 @@
         "dynamic-token/User1"
       ],
       "target": [
-        "dynamic-token/User3"
+        "dynamic-token/User2"
       ]
     },
     "DeleteUser": {
