@@ -2,13 +2,13 @@
 # Declare variables to be passed into your templates.
 
 deployment:
-  namespace: ali
-  prefix: ali
+  namespace: ali1
+  prefix: ali1
   hostname: photo-demo.westeurope.cloudapp.azure.com
 
 pixiapp:
-  repository: 42crunch/pixi
-  version: v4.7.1
+  repository: heshaam/pixi
+  version: patched
   pullPolicy: Always
   pod_listen_port: 8090
   svc_listen_port: 8090

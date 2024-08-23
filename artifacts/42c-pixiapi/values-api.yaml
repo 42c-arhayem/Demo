@@ -3,6 +3,7 @@
 
 deployment:
   namespace: ali1
+  prefix: ali1
   hostname: photo-demo.westeurope.cloudapp.azure.com
 
 pixiapp:
@@ -10,12 +11,17 @@ pixiapp:
   version: latest
   pullPolicy: Always
   pod_listen_port: 8090
-  svc_listen_port: 80
-  replicas: 2
+  svc_listen_port: 8090
+  replicas: 1
+  inject_firewall: false
   service_type: NodePort
 
 pixidb:
   repository: 42crunch/pixi
-  version: mongo
+  version: datastore
   pullPolicy: IfNotPresent
   listen_port: 27017
+
+firewall:
+  target_url: http://localhost:8090
+  server_name: photo-demo.westeurope.cloudapp.azure.com

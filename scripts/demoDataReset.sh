@@ -1,7 +1,11 @@
 #!/bin/bash
 
+# Prompt the user for the namespace
+echo "Please enter the namespace:"
+read namespace
+
 # Run kubectl get pods command and store the output in a variable
-kubectl_output=$(kubectl get pods -n ali1)
+kubectl_output=$(kubectl get pods -n "$namespace")
 
 # Check if the kubectl command was successful
 if [ $? -eq 0 ]; then
@@ -15,7 +19,7 @@ if [ $? -eq 0 ]; then
 
         # Delete each of the pods containing "pixidb"
         for pod_name in $pod_names; do
-            kubectl delete pod "$pod_name" -n ali1
+            kubectl delete pod "$pod_name" -n "$namespace"
             if [ $? -eq 0 ]; then
                 echo "Deleted pod: $pod_name"
             else
@@ -27,7 +31,7 @@ if [ $? -eq 0 ]; then
         sleep 10
 
         # Get the name of the newly created pod containing "pixidb"
-        new_pod_name=$(kubectl get pods -n ali1| grep "pixidb" | awk '{print $1}' | head -n 1)
+        new_pod_name=$(kubectl get pods -n "$namespace" | grep "pixidb" | awk '{print $1}' | head -n 1)
 
         if [ -n "$new_pod_name" ]; then
             echo "New pod name: $new_pod_name"
@@ -37,7 +41,7 @@ if [ $? -eq 0 ]; then
             json_data_user_common='{"user": "userscan-run@acme.com","pass": "hellopixi","name": "User Common","is_admin": false,"account_balance": 1000}'
 
             # Invoke the API using curl with POST method and passing the JSON data
-            api_url="https://photo-demo.westeurope.cloudapp.azure.com/ali1/api/user/register"
+            api_url="https://photo-demo.westeurope.cloudapp.azure.com/$namespace/api/user/register"
             curl_response_inbound=$(curl -s -X POST -H "Content-Type: application/json" -d "$json_data_user_inbound" "$api_url")
             curl_response_common=$(curl -s -X POST -H "Content-Type: application/json" -d "$json_data_user_common" "$api_url")
 
@@ -48,14 +52,14 @@ if [ $? -eq 0 ]; then
                 echo "Common User: $curl_response_common"
 
                 # Extract the token from the JSON response using jq
-             #   token=$(echo "$curl_response_common" | jq -r '.token')
+                token=$(echo "$curl_response_common" | jq -r '.token')
 
-             #   if [ -n "$token" ]; then
-             #       echo "Token to use as parameter SCAN42C_SECURITY_COMMON_ACCESS_TOKEN : $token"
-             #       export PIXI_TOKEN="$token"
-             #   else
-             #       echo "Error: Failed to extract token from API response."
-             #   fi
+                if [ -n "$token" ]; then
+                    echo "Token to use as parameter SCAN42C_SECURITY_COMMON_ACCESS_TOKEN : $token"
+                    export PIXI_TOKEN="$token"
+                else
+                    echo "Error: Failed to extract token from API response."
+                fi
 
             else
                 echo "Error: Failed to invoke the API."
