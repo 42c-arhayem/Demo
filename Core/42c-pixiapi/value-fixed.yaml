@@ -7,7 +7,7 @@ deployment:
 
 pixiapp:
   repository: heshaam/pixi
-  version: latest
+  version: patched
   pullPolicy: Always
   pod_listen_port: 8090
   svc_listen_port: 80

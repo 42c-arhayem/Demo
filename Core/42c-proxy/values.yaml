@@ -42,4 +42,3 @@ apifirewall:
   loadBalancerType: LoadBalancer
   # External Traffic Policy
   trafficPolicy: Local
-  protection_token: 6b634c9c-09da-40ff-9bc6-0a578cb48b66

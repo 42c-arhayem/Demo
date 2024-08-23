@@ -54,7 +54,7 @@
           "name": "SCAN42C_HOST",
           "from": "environment",
           "required": false,
-          "default": "https://photo-demo.westeurope.cloudapp.azure.com/ali/api"
+          "default": "https://photo-demo.westeurope.cloudapp.azure.com/ali1/api"
         },
         "user_inbound": {
           "name": "SCAN42C_USER_INBOUND",
