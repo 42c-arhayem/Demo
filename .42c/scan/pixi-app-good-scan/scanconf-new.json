@@ -54,19 +54,19 @@
           "name": "SCAN42C_HOST",
           "from": "environment",
           "required": false,
-          "default": "https://photo-demo.westeurope.cloudapp.azure.com/ali/api"
+          "default": "https://photo-demo.westeurope.cloudapp.azure.com/ali1/api"
         },
-        "username": {
+        "user_inbound": {
           "name": "SCAN42C_USER_INBOUND",
           "from": "environment",
           "required": false,
-          "default": "misty94@demo.mail"
+          "default": "user-inbound@acme.com"
         },
-        "password": {
+        "pass_inbound": {
           "name": "SCAN42C_PASS_INBOUND",
           "from": "environment",
           "required": false,
-          "default": "ball"
+          "default": "hellopixi"
         }
       }
     }
@@ -142,8 +142,8 @@
             "requestBody": {
               "mode": "json",
               "json": {
-                "pass": "{{password}}",
-                "user": "{{username}}"
+                "pass": "{{pass_inbound}}",
+                "user": "{{user_inbound}}"
               }
             }
           }
@@ -416,7 +416,7 @@
       "request": {
         "operationId": "listUserPictures",
         "auth": [
-          "access-token"
+          "dynamic-token/User3"
         ],
         "request": {
           "type": "42c",
@@ -575,7 +575,7 @@
       "request": {
         "operationId": "uploadPicture",
         "auth": [
-          "access-token"
+          "dynamic-token/User3"
         ],
         "request": {
           "type": "42c",
@@ -592,7 +592,7 @@
             "requestBody": {
               "mode": "json",
               "json": {
-                "contents": "{{$randomFromSchema}}",
+                "contents": "{{$randomString}}",
                 "title": "company logo"
               }
             }
@@ -659,7 +659,7 @@
       "request": {
         "operationId": "uploadPictureFromFile",
         "auth": [
-          "admin-user"
+          "dynamic-token/User3"
         ],
         "request": {
           "type": "42c",
@@ -738,12 +738,65 @@
         }
       ]
     },
+    "userSearch": {
+      "operationId": "userSearch",
+      "request": {
+        "operationId": "userSearch",
+        "auth": [
+          "dynamic-token/User3"
+        ],
+        "request": {
+          "type": "42c",
+          "details": {
+            "operationId": "userSearch",
+            "method": "GET",
+            "url": "{{host}}/admin/users/search",
+            "queries": [
+              {
+                "key": "search",
+                "value": "scanuser@test.com"
+              }
+            ]
+          }
+        },
+        "defaultResponse": "200",
+        "responses": {
+          "200": {
+            "expectations": {
+              "httpStatus": 200
+            }
+          },
+          "403": {
+            "expectations": {
+              "httpStatus": 403
+            }
+          },
+          "default": {
+            "expectations": {
+              "httpStatus": "default"
+            }
+          }
+        }
+      },
+      "scenarios": [
+        {
+          "key": "happy.path",
+          "requests": [
+            {
+              "fuzzing": true,
+              "$ref": "#/operations/userSearch/request"
+            }
+          ],
+          "fuzzing": true
+        }
+      ]
+    },
     "userinfo": {
       "operationId": "userinfo",
       "request": {
         "operationId": "userinfo",
         "auth": [
-          "access-token"
+          "dynamic-token/User3"
         ],
         "request": {
           "type": "42c",
@@ -780,59 +833,6 @@
               "fuzzing": true,
               "$ref": "#/operations/userinfo/request",
               "expectedResponse": "200"
-            }
-          ],
-          "fuzzing": true
-        }
-      ]
-    },
-    "getInfoById": {
-      "operationId": "getInfoById",
-      "request": {
-        "operationId": "getInfoById",
-        "auth": [
-          "access-token"
-        ],
-        "request": {
-          "type": "42c",
-          "details": {
-            "operationId": "getInfoById",
-            "method": "GET",
-            "url": "{{host}}/user/info/{id}",
-            "paths": [
-              {
-                "key": "id",
-                "value": "a83a29f5-0d63-46f2-8f2e-44c2f1d2e07e"
-              }
-            ]
-          }
-        },
-        "defaultResponse": "200",
-        "responses": {
-          "200": {
-            "expectations": {
-              "httpStatus": 200
-            }
-          },
-          "401": {
-            "expectations": {
-              "httpStatus": 401
-            }
-          },
-          "403": {
-            "expectations": {
-              "httpStatus": 403
-            }
-          }
-        }
-      },
-      "scenarios": [
-        {
-          "key": "happy.path",
-          "requests": [
-            {
-              "fuzzing": true,
-              "$ref": "#/operations/getInfoById/request"
             }
           ],
           "fuzzing": true
@@ -911,6 +911,10 @@
     },
     {
       "$ref": "#/operations/authenticate/request",
+      "environment": {
+        "user_inbound": "user-inbound@acme.com",
+        "pass_inbound": "hellopixi"
+      },
       "responses": {
         "200": {
           "expectations": {
@@ -940,7 +944,7 @@
       }
     },
     {
-      "$ref": "#/operations/uploadPictureFromFile/request",
+      "$ref": "#/operations/uploadPicture/request",
       "responses": {
         "200": {
           "expectations": {
@@ -1165,7 +1169,7 @@
         "admin-user/admin1"
       ],
       "target": [
-        "access-token/User1"
+        "dynamic-token/User3"
       ]
     },
     "AdminOnlyOps": {
@@ -1174,7 +1178,7 @@
         "admin-user/admin1"
       ],
       "target": [
-        "access-token/User1"
+        "dynamic-token/User3"
       ]
     },
     "BadTokenSwap": {
