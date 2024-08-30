@@ -66,7 +66,7 @@
           "name": "SCAN42C_PASS_INBOUND",
           "from": "environment",
           "required": false,
-          "default": "balltestball"
+          "default": "ball"
         }
       }
     }
@@ -153,17 +153,6 @@
           "200": {
             "expectations": {
               "httpStatus": 200
-            },
-            "variableAssignments": {
-              "token_1": {
-                "from": "response",
-                "in": "body",
-                "contentType": "json",
-                "path": {
-                  "type": "jsonPointer",
-                  "value": "/token"
-                }
-              }
             }
           },
           "422": {
@@ -178,48 +167,13 @@
           }
         }
       },
-      "before": [
-        {
-          "$ref": "#/operations/register/request",
-          "responses": {
-            "200": {
-              "expectations": {
-                "httpStatus": 200
-              },
-              "variableAssignments": {
-                "user_id": {
-                  "from": "response",
-                  "in": "body",
-                  "contentType": "json",
-                  "path": {
-                    "type": "jsonPointer",
-                    "value": "/_id"
-                  }
-                },
-                "user_token": {
-                  "from": "response",
-                  "in": "body",
-                  "contentType": "json",
-                  "path": {
-                    "type": "jsonPointer",
-                    "value": "/token"
-                  }
-                }
-              }
-            }
-          }
-        }
-      ],
       "scenarios": [
         {
           "key": "happy.path",
           "requests": [
             {
               "fuzzing": true,
-              "$ref": "#/operations/authenticate/request",
-              "environment": {
-                "": ""
-              }
+              "$ref": "#/operations/authenticate/request"
             }
           ],
           "fuzzing": true
@@ -553,7 +507,7 @@
                 "account_balance": 150,
                 "is_admin": false,
                 "name": "RandomPixiUser",
-                "pass": "{{password}}",
+                "pass": "{{pass_inbound}}",
                 "user": "register@acme.com"
               }
             }
@@ -879,59 +833,6 @@
             {
               "fuzzing": true,
               "$ref": "#/operations/getInfoById/request"
-            }
-          ],
-          "fuzzing": true
-        }
-      ]
-    },
-    "userSearch": {
-      "operationId": "userSearch",
-      "request": {
-        "operationId": "userSearch",
-        "auth": [
-          "access-token"
-        ],
-        "request": {
-          "type": "42c",
-          "details": {
-            "operationId": "userSearch",
-            "method": "GET",
-            "url": "{{host}}/admin/users/search",
-            "queries": [
-              {
-                "key": "search",
-                "value": "@tB1GW8k=YplkAMHAdx7Vep5FX1lM\rCUAWx\ttgbhAp68936QF QXcE4uXLPDcqO.RF@h94BHpey5yMUOyAfP"
-              }
-            ]
-          }
-        },
-        "defaultResponse": "200",
-        "responses": {
-          "200": {
-            "expectations": {
-              "httpStatus": 200
-            }
-          },
-          "403": {
-            "expectations": {
-              "httpStatus": 403
-            }
-          },
-          "default": {
-            "expectations": {
-              "httpStatus": "default"
-            }
-          }
-        }
-      },
-      "scenarios": [
-        {
-          "key": "happy.path",
-          "requests": [
-            {
-              "fuzzing": true,
-              "$ref": "#/operations/userSearch/request"
             }
           ],
           "fuzzing": true
@@ -1379,33 +1280,6 @@
               "pass": "{{pass_inbound}}",
               "user": "{{user_inbound}}"
             }
-          }
-        }
-      },
-      "defaultResponse": "200",
-      "responses": {
-        "200": {
-          "expectations": {
-            "httpStatus": 200
-          }
-        }
-      }
-    },
-    "Authenticate": {
-      "request": {
-        "type": "42c",
-        "details": {
-          "method": "POST",
-          "url": "http://localhost:8080/",
-          "headers": [
-            {
-              "key": "Authorization",
-              "value": "Bearer {{token_1}}"
-            }
-          ],
-          "requestBody": {
-            "mode": "json",
-            "json": {}
           }
         }
       },
