@@ -26,6 +26,12 @@ steps:
 - task: UsePythonVersion@0
   inputs:
     versionSpec: '3.x'
+
+- script: |
+    python -m pip install --upgrade pip
+    python -m pip install requests
+  displayName: 'Install dependencies'
+
 - script: |
     python scripts/conformance_scan_v2.py --action create_conf --credentials $(API_KEY) --api_uuid $(API_UUID)
   displayName: 'Run Scan Configuration Script'
