@@ -20,3 +20,9 @@ steps:
     platformUrl: 'https://demolabs.42crunch.cloud'
     defaultCollectionName: 'Demo APIs v1'
     logLevel: 'DEBUG'
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.x'
+- script: |
+    python scripts/conformance_scan_v2.py --action create_conf --credentials $(API_KEY) --api_uuid $(API_UUID)
+  displayName: 'Run Scan Configuration Script'
