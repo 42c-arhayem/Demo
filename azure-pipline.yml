@@ -16,7 +16,7 @@ steps:
     versionSpec: '=12.0.0'
 - task: APIContractSecurityAudit@4
   inputs:
-    apiToken: '$(42C_API_TOKEN)'
+    apiToken: '$(API_KEY)'
     platformUrl: 'https://demolabs.42crunch.cloud'
     defaultCollectionName: 'Demo APIs v1'
     logLevel: 'DEBUG'
