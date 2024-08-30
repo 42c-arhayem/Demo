@@ -14,15 +14,15 @@ steps:
   displayName: Use Node 12 or higher
   inputs:
     versionSpec: '=12.0.0'
-- task: APIContractSecurityAudit@4
+# - task: APIContractSecurityAudit@4
+#  inputs:
+#    apiToken: '$(API_KEY)'
+#    platformUrl: 'https://demolabs.42crunch.cloud'
+#   defaultCollectionName: 'Demo APIs v1'
+#    logLevel: 'DEBUG'
+- task: APIContractSecurityAudit@5
   inputs:
-    apiToken: '$(API_KEY)'
-    platformUrl: 'https://demolabs.42crunch.cloud'
-    defaultCollectionName: 'Demo APIs v1'
-    logLevel: 'DEBUG'
-# - task: APIContractSecurityAudit@5
-# inputs:
-#   platformServiceConnection: '42Crunch Platform Connection'
+   platformServiceConnection: '42Crunch Platform Connection'
 - task: UsePythonVersion@0
   inputs:
     versionSpec: '3.x'
