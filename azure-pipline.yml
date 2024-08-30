@@ -20,6 +20,9 @@ steps:
     platformUrl: 'https://demolabs.42crunch.cloud'
     defaultCollectionName: 'Demo APIs v1'
     logLevel: 'DEBUG'
+# - task: APIContractSecurityAudit@5
+# inputs:
+#   platformServiceConnection: '42Crunch Platform Connection'
 - task: UsePythonVersion@0
   inputs:
     versionSpec: '3.x'
