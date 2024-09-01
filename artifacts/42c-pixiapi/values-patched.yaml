@@ -2,8 +2,8 @@
 # Declare variables to be passed into your templates.
 
 deployment:
-  namespace: ali1
-  prefix: ali1
+  namespace: ali
+  prefix: ali
   hostname: photo-demo.westeurope.cloudapp.azure.com
 
 pixiapp:

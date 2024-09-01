@@ -66,7 +66,7 @@
           "name": "SCAN42C_PASS_INBOUND",
           "from": "environment",
           "required": false,
-          "default": "balltestball"
+          "default": "ball"
         }
       }
     }
@@ -156,8 +156,8 @@
             },
             "variableAssignments": {
               "token_1": {
-                "from": "response",
                 "in": "body",
+                "from": "response",
                 "contentType": "json",
                 "path": {
                   "type": "jsonPointer",
@@ -188,8 +188,8 @@
               },
               "variableAssignments": {
                 "user_id": {
-                  "from": "response",
                   "in": "body",
+                  "from": "response",
                   "contentType": "json",
                   "path": {
                     "type": "jsonPointer",
@@ -197,8 +197,8 @@
                   }
                 },
                 "user_token": {
-                  "from": "response",
                   "in": "body",
+                  "from": "response",
                   "contentType": "json",
                   "path": {
                     "type": "jsonPointer",
