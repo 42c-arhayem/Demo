@@ -9,6 +9,10 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
+variables:
+  platformUrl: 'https://demolabs.42crunch.cloud'
+  PIXI_host: "https://photo-demo.westeurope.cloudapp.azure.com/ali/api"
+
 steps:
 - task: NodeTool@0
   displayName: Use Node 12 or higher
@@ -22,7 +26,16 @@ steps:
 #    logLevel: 'DEBUG'
 - task: APIContractSecurityAudit@5
   inputs:
-   platformServiceConnection: '42Crunch Platform Connection'
+#     platformServiceConnection: '42Crunch Platform Connection'
+     apiToken: '$(42C_API_TOKEN)'
+     minScore: '75'
+     platformUrl: '$(platformUrl)'
+     logLevel: DEBUG
+     defaultCollectionName: 'AzureDevOps Github Pixi main'
+     ignoreFailures: 'false'
+     jsonReport: 'audit-action-report-$(Build.BuildId).json'
+     sarifReport: 'audit-report-$(Build.BuildId).sarif'
+
 - task: UsePythonVersion@0
   inputs:
     versionSpec: '3.x'
