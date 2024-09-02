@@ -27,11 +27,45 @@ steps:
   inputs:
     versionSpec: '3.x'
 
+# Required: Fetch Pixi API UUID from the Audit summary report
+- task: CmdLine@2
+  displayName: 'Check Audit Summary Report'
+  inputs:
+    script: |
+      echo "Audit JSON Report:"
+      cat $(Build.Repository.LocalPath)/audit-action-report-$(Build.BuildId).json
+
+      apiId=$(cat $(Build.Repository.LocalPath)/audit-action-report-$(Build.BuildId).json | jq -r '.audit.report."OASFiles/pixi.json".apiId')
+      
+      printf "\n"
+      echo "Pixi API UUID: $apiId"
+      echo "##vso[task.setvariable variable=API_UUID]$apiId"
+
+# Required: Fetch Pixi API AliasId from the .42c/conf.yaml
 - script: |
     python -m pip install --upgrade pip
-    python -m pip install requests
-  displayName: 'Install dependencies'
+    python -m pip install yq
+  displayName: 'Install yq'
+- script: python -m pip install requests --upgrade pip
+  displayName: 'Install tools'
 
-- script: |
-    python scripts/conformance_scan_v2.py --action create_conf --credentials $(API_KEY) --api_uuid $(API_UUID)
-  displayName: 'Run Scan Configuration Script'
+- task: CmdLine@2
+  displayName: 'Fetch API AliasId'
+  inputs:
+    script: |
+      echo "Audit JSON Report:"
+      cat $(Build.Repository.LocalPath)/.42c/conf.yaml
+
+      aliasId=$(cat $(Build.Repository.LocalPath)/.42c/conf.yaml | yq '.apis."OASFiles/Pixi\ App\ Good\ Scan.json".alias')
+
+      printf "\n"
+      echo "Pixi API AliasId: $aliasId"
+      echo "##vso[task.setvariable variable=API_ALIAS_ID]$aliasId"
+#- script: |
+#    python -m pip install --upgrade pip
+#    python -m pip install requests
+#  displayName: 'Install dependencies'
+
+#- script: |
+#   python scripts/conformance_scan_v2.py --action create_conf --credentials $(API_KEY) --api_uuid $(API_UUID)
+#  displayName: 'Run Scan Configuration Script'
