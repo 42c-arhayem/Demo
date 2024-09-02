@@ -48,7 +48,7 @@ steps:
       echo "Audit JSON Report:"
       cat $(Build.Repository.LocalPath)/audit-action-report-$(Build.BuildId).json
 
-      apiId=$(cat $(Build.Repository.LocalPath)/audit-action-report-$(Build.BuildId).json | jq -r '.audit.report."OASFiles/pixi.json".apiId')
+      apiId=$(cat $(Build.Repository.LocalPath)/audit-action-report-$(Build.BuildId).json | jq -r '.audit.report."OASFiles/Pixi\ App\ Good\ Scan.json".apiId')
       
       printf "\n"
       echo "Pixi API UUID: $apiId"
