@@ -26,7 +26,7 @@ steps:
 #    logLevel: 'DEBUG'
 - task: APIContractSecurityAudit@5
   inputs:
-#     platformServiceConnection: '42Crunch Platform Connection'
+     platformServiceConnection: '42Crunch Platform Connection'
      apiToken: '$(42C_API_TOKEN)'
      minScore: '75'
      platformUrl: '$(platformUrl)'
