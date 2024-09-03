@@ -56,6 +56,7 @@ steps:
 - script: |
     docker run -v $(Build.Repository.LocalPath):/workspace \
                -e X42C_REPOSITORY_URL=https://github.com/42c-arhayem/Demo \
+               -e X42C_PLATFORM_URL=$(platformUrl) \
                -e X42C_API_TOKEN=$(API_KEY) \
                -e X42C_BRANCH_NAME=master \
                -e logLevel=DEBUG \
