@@ -54,7 +54,7 @@ steps:
   displayName: 'Install tools'
 # 42Crunch API Security Audit using the Docker Image
 - script: |
-    echo ("    docker run -v "$(Build.Repository.LocalPath):/workspace" \
+    echo ("docker run -v "$(Build.Repository.LocalPath):/workspace" \
                -e X42C_REPOSITORY_URL=https://github.com/42c-arhayem/Demo \
                -e X42C_PLATFORM_URL=$(platformUrl) \
                -e X42C_API_TOKEN=$(API_KEY) \
@@ -62,7 +62,6 @@ steps:
                -e logLevel=DEBUG \
                -e jsonReport=audit-action-report-$(Build.BuildId).json \
                -e sarifReport=audit-report-$(Build.BuildId).sarif \
-               -e X42C_ROOT_DIRECTORY="$(Build.Repository.LocalPath)/OAS Files/" \
                42crunch/docker-api-security-audit:v3.4")
     docker run -v "$(Build.Repository.LocalPath):/workspace" \
                -e X42C_REPOSITORY_URL=https://github.com/42c-arhayem/Demo \
