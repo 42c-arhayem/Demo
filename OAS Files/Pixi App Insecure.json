@@ -57,7 +57,13 @@
                                 "type": "object",
                                 "properties": {
                                     "user": {
-                                      "type": "string"
+                                      "type": "string",
+                                      "format": "username",
+                                      "example": "Isa Mauny",
+                                      "pattern": "^[\\sa-zA-Z]{5,35}$",
+                                      "minLength": 5,
+                                      "maxLength": 35,
+                                      "x-42c-format": "o:username"
                                     },
                                     "pass": {
                                       "type": "string",
