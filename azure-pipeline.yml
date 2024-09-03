@@ -54,9 +54,16 @@ steps:
   displayName: 'Install tools'
 # 42Crunch API Security Audit using the Docker Image
 - script: |
-    docker pull 42crunch/docker-api-security-audit:v3.4
-    docker run -v $(Build.Repository.LocalPath):/workspace -e X42C_REPOSITORY_URL=https://github.com/42c-arhayem/Demo -e X42C_API_TOKEN=$(API_KEY) -e X42C_BRANCH_NAME=master -e logLevel=DEBUG -e jsonReport=audit-action-report-$(Build.BuildId).json -e sarifReport=audit-report-$(Build.BuildId).sarif
-  displayName: 'Pull and Run 42Crunch Audit Docker Image'
+    docker run -v "$(Build.Repository.LocalPath):/workspace" \
+               -e X42C_REPOSITORY_URL=https://github.com/42c-arhayem/Demo \
+               -e X42C_PLATFORM_URL=$(platformUrl) \
+               -e X42C_API_TOKEN=$(API_KEY) \
+               -e X42C_BRANCH_NAME=master \
+               -e logLevel=DEBUG \
+               -e jsonReport=audit-action-report-$(Build.BuildId).json \
+               -e sarifReport=audit-report-$(Build.BuildId).sarif \
+               42crunch/docker-api-security-audit:v3.4
+  displayName: 'Run 42Crunch Audit Docker Image'
 
 # 42Crunch API Security Audit using the Audit Plugin
 # - task: APIContractSecurityAudit@3
@@ -134,14 +141,14 @@ steps:
 #   2. Create default scan config from OpenAPI definition
 #
 # Option #1 - Upload Scan V2 Configuration from file
-- task: PythonScript@0
-  name: uploadscanconfig
-  displayName: Update Scan V2 Configuration
-  inputs:
-    scriptSource: 'filePath' # Options: filePath, inline
-    scriptPath: $(Build.Repository.LocalPath)/scripts/conformance_scanv2.py
-    #script: # Required when scriptSource == inline
-    arguments: -c $(42C_API_TOKEN) -p $(platformUrl) -a $(API_UUID) -n $(config_name) -t scan_token.json -f $(Build.Repository.LocalPath)/.42c/scan/$(API_ALIAS_ID)/scanconf.json --action upload_conf
+# - task: PythonScript@0
+#   name: uploadscanconfig
+#   displayName: Update Scan V2 Configuration
+#   inputs:
+#     scriptSource: 'filePath' # Options: filePath, inline
+#     scriptPath: $(Build.Repository.LocalPath)/scripts/conformance_scanv2.py
+#     #script: # Required when scriptSource == inline
+#     arguments: -c $(42C_API_TOKEN) -p $(platformUrl) -a $(API_UUID) -n $(config_name) -t scan_token.json -f $(Build.Repository.LocalPath)/.42c/scan/$(API_ALIAS_ID)/scanconf.json --action upload_conf
 
 # Option #2 - Create default Scan V2 Configuration from the OpenAPI Definition
 # - task: PythonScript@0
@@ -154,15 +161,15 @@ steps:
 #     arguments: -c $(42C_API_TOKEN) -p $(platformUrl) -a $(API_UUID) -n $(config_name) -t scan_token.json --action create_conf
 
 # Save Scan Token to a variable
-- task: CmdLine@2
-  displayName: 'Check Scan V2 Configuration'
-  name: savescanconfig
-  inputs:
-    script: |
-      scan_content=$(cat $(Build.Repository.LocalPath)/scan_token.json | jq -r '.scan_token')
-      scan_token=$(echo $scan_content | cut -d',' -f1)
-      echo "Scan V2 Token: $scan_token"
-      echo "##vso[task.setvariable variable=SCANV2_TOKEN;isoutput=true]$scan_token"
+# - task: CmdLine@2
+#   displayName: 'Check Scan V2 Configuration'
+#   name: savescanconfig
+#   inputs:
+#     script: |
+#       scan_content=$(cat $(Build.Repository.LocalPath)/scan_token.json | jq -r '.scan_token')
+#       scan_token=$(echo $scan_content | cut -d',' -f1)
+#       echo "Scan V2 Token: $scan_token"
+#       echo "##vso[task.setvariable variable=SCANV2_TOKEN;isoutput=true]$scan_token"
 
 # Run Conformance Scan on Pixi API Using the 42Crunch Conformance Service (internal)
 # - task: 42CrunchConformanceService@1
@@ -212,47 +219,47 @@ steps:
 #       $(Build.Repository.LocalPath)/scripts/check-scand-manager.sh scand-$(Build.BuildId)-v2
 
 # Inject Protection Policies into the API definition for security headers and global rate limiting
-- task: 42CrunchSecurityAsCode@1
-  displayName: Inject Protection Policies  
-  inputs:
-    api_id: '$(API_UUID)'
-    platform_url: '$(platformUrl)'
-    sec_headers: true
-    global_rate_limiting: true
-  env:
-    API_KEY: $(42C_API_TOKEN)
+# - task: 42CrunchSecurityAsCode@1
+#   displayName: Inject Protection Policies  
+#   inputs:
+#     api_id: '$(API_UUID)'
+#     platform_url: '$(platformUrl)'
+#     sec_headers: true
+#     global_rate_limiting: true
+#   env:
+#     API_KEY: $(42C_API_TOKEN)
 
 # Update the firewall protection with the latest API definition
-- task: 42CrunchUpdateProtectionService@1
-  displayName: Updating Pixi Deployment
-  inputs:
-    api_id: $(API_UUID)
-    platform_url: '$(platformUrl)'
-  env:
-    API_KEY: $(42C_API_TOKEN)
+# - task: 42CrunchUpdateProtectionService@1
+#   displayName: Updating Pixi Deployment
+#   inputs:
+#     api_id: $(API_UUID)
+#     platform_url: '$(platformUrl)'
+#   env:
+#     API_KEY: $(42C_API_TOKEN)
 
 # Deploy firewall prerequisites
-- task: HelmDeploy@0
-  displayName: "Deploy Firewall prerequisites"
-  inputs:
-    connectionType: 'Kubernetes Service Connection'
-    kubernetesServiceConnection: '$(kubernetesConnection)'
-    namespace: '$(namespace)'
-    command: 'upgrade'
-    chartType: 'FilePath'
-    chartPath: './42c-firewall'
-    releaseName: '$(FW_RELEASE_NAME)'
-    overrideValues: 'apifirewall.protection_token=$(PROTECTION_TOKEN)'
+# - task: HelmDeploy@0
+#   displayName: "Deploy Firewall prerequisites"
+#   inputs:
+#     connectionType: 'Kubernetes Service Connection'
+#     kubernetesServiceConnection: '$(kubernetesConnection)'
+#     namespace: '$(namespace)'
+#     command: 'upgrade'
+#     chartType: 'FilePath'
+#     chartPath: './42c-firewall'
+#     releaseName: '$(FW_RELEASE_NAME)'
+#     overrideValues: 'apifirewall.protection_token=$(PROTECTION_TOKEN)'
     
 # Inject 42Crunch firewall into the API deployment
-- task: HelmDeploy@0
-  displayName: "Inject Firewall into API Deployment"
-  inputs:
-    connectionType: 'Kubernetes Service Connection'
-    kubernetesServiceConnection:  '$(kubernetesConnection)'
-    namespace: '$(namespace)'
-    command: 'upgrade'
-    chartType: 'FilePath'
-    chartPath: './42c-pixiapi'
-    releaseName: '$(PIXI_RELEASE_NAME)'
-    overrideValues: 'pixiapp.inject_firewall=true,pixiapp.pod_listen_port=8080'
+# - task: HelmDeploy@0
+#   displayName: "Inject Firewall into API Deployment"
+#   inputs:
+#     connectionType: 'Kubernetes Service Connection'
+#     kubernetesServiceConnection:  '$(kubernetesConnection)'
+#     namespace: '$(namespace)'
+#     command: 'upgrade'
+#     chartType: 'FilePath'
+#     chartPath: './42c-pixiapi'
+#     releaseName: '$(PIXI_RELEASE_NAME)'
+#     overrideValues: 'pixiapp.inject_firewall=true,pixiapp.pod_listen_port=8080'
