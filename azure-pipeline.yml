@@ -21,7 +21,7 @@ variables:
   #Testing only!
   # PIXI_user: "scanuser@test.com"
   # PIXI_pass: "hellopixi"
-  PIXI_host: "https://photo-demo.westeurope.cloudapp.azure.com/hesh/api"
+  PIXI_host: "https://photo-demo.westeurope.cloudapp.azure.com/ali/api"
 
   #protectionsConnection: 'ProtectionsRepoConnection'
 
@@ -58,7 +58,7 @@ steps:
                -e X42C_REPOSITORY_URL=https://github.com/42c-arhayem/Demo \
                -e X42C_PLATFORM_URL=$(platformUrl) \
                -e X42C_API_TOKEN=$(API_KEY) \
-               -e X42C_BRANCH_NAME=master \
+               -e X42C_BRANCH_NAME=main \
                -e X42C_LOG_LEVEL=DEBUG \
                -e jsonReport=audit-action-report-$(Build.BuildId).json \
                -e sarifReport=audit-report-$(Build.BuildId).sarif \
@@ -119,7 +119,7 @@ steps:
       echo "Audit JSON Report:"
       cat $(Build.Repository.LocalPath)/.42c/conf.yaml
 
-      aliasId=$(cat $(Build.Repository.LocalPath)/.42c/conf.yaml | yq '.apis."OASFiles/pixi.json".alias')
+      aliasId=$(cat $(Build.Repository.LocalPath)/.42c/conf.yaml | yq '.apis."OASFiles/Pixi App Good Scan.json".alias')
 
       printf "\n"
       echo "Pixi API AliasId: $aliasId"
@@ -162,15 +162,15 @@ steps:
 #     arguments: -c $(42C_API_TOKEN) -p $(platformUrl) -a $(API_UUID) -n $(config_name) -t scan_token.json --action create_conf
 
 # Save Scan Token to a variable
-# - task: CmdLine@2
-#   displayName: 'Check Scan V2 Configuration'
-#   name: savescanconfig
-#   inputs:
-#     script: |
-#       scan_content=$(cat $(Build.Repository.LocalPath)/scan_token.json | jq -r '.scan_token')
-#       scan_token=$(echo $scan_content | cut -d',' -f1)
-#       echo "Scan V2 Token: $scan_token"
-#       echo "##vso[task.setvariable variable=SCANV2_TOKEN;isoutput=true]$scan_token"
+- task: CmdLine@2
+  displayName: 'Check Scan V2 Configuration'
+  name: savescanconfig
+  inputs:
+    script: |
+      scan_content=$(cat $(Build.Repository.LocalPath)/scan_token.json | jq -r '.scan_token')
+      scan_token=$(echo $scan_content | cut -d',' -f1)
+      echo "Scan V2 Token: $scan_token"
+      echo "##vso[task.setvariable variable=SCANV2_TOKEN;isoutput=true]$scan_token"
 
 # Run Conformance Scan on Pixi API Using the 42Crunch Conformance Service (internal)
 # - task: 42CrunchConformanceService@1
