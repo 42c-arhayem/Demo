@@ -105,7 +105,7 @@ steps:
       echo "Audit JSON Report:"
       cat $(Build.Repository.LocalPath)/audit-action-report-$(Build.BuildId).json
 
-      apiId=$(cat $(Build.Repository.LocalPath)/audit-action-report-$(Build.BuildId).json | jq -r '.audit.report."OASFiles/pixi.json".apiId')
+      apiId=$(cat $(Build.Repository.LocalPath)/audit-action-report-$(Build.BuildId).json | jq -r '.audit.report."OAS Files/Pixi App Good Scan.json".apiId')
       
       printf "\n"
       echo "Pixi API UUID: $apiId"
@@ -119,7 +119,7 @@ steps:
       echo "Audit JSON Report:"
       cat $(Build.Repository.LocalPath)/.42c/conf.yaml
 
-      aliasId=$(cat $(Build.Repository.LocalPath)/.42c/conf.yaml | yq '.apis."OASFiles/Pixi App Good Scan.json".alias')
+      aliasId=$(cat $(Build.Repository.LocalPath)/.42c/conf.yaml | yq '.apis."OAS Files/Pixi App Good Scan.json".alias')
 
       printf "\n"
       echo "Pixi API AliasId: $aliasId"
