@@ -71,6 +71,7 @@ steps:
   displayName: Auditing OAS Files
   inputs:
     apiToken: '$(API_KEY)'
+    platformServiceConnection: '42Crunch Platform Connection'
     minScore: '75'
     platformUrl: '$(platformUrl)'
     logLevel: DEBUG
