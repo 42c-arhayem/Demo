@@ -19,8 +19,8 @@ variables:
 
   config_name: azureDevOps
   #Testing only!
-  # PIXI_user: "scanuser@test.com"
-  # PIXI_pass: "hellopixi"
+  PIXI_user: "barbara8@demo.mail"
+  PIXI_pass: "ball"
   PIXI_host: "https://photo-demo.westeurope.cloudapp.azure.com/ali/api"
 
   #protectionsConnection: 'ProtectionsRepoConnection'
