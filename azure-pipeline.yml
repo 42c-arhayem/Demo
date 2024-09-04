@@ -92,15 +92,15 @@ steps:
       echo "Audit Sarif Report:"
       cat $(Build.Repository.LocalPath)/audit-report-$(Build.BuildId).sarif | jq . | head -n 50
 
-# Optional: fetch an access token from the Pixi API
-- task: CmdLine@2
-  displayName: 'Fetch Pixi API Token'
-  inputs:
-    script: |
-      PIXI_token=$(curl -sv -X POST -d '{"user": "$(PIXI_user)","pass": "$(PIXI_pass)"}' -H 'Content-Type: application/json' $(PIXI_host)/user/login | jq -r '.token')
+# # Optional: fetch an access token from the Pixi API
+# - task: CmdLine@2
+#   displayName: 'Fetch Pixi API Token'
+#   inputs:
+#     script: |
+#       PIXI_token=$(curl -sv -X POST -d '{"user": "$(PIXI_user)","pass": "$(PIXI_pass)"}' -H 'Content-Type: application/json' $(PIXI_host)/user/login | jq -r '.token')
 
-      echo "Pixi API Token: $PIXI_token"
-      echo "##vso[task.setvariable variable=PIXI_token]$PIXI_token"
+#       echo "Pixi API Token: $PIXI_token"
+#       echo "##vso[task.setvariable variable=PIXI_token]$PIXI_token"
 
 # Required: Fetch Pixi API UUID from the Audit summary report
 - task: CmdLine@2
@@ -197,7 +197,7 @@ steps:
 # Option 1 - Run Conformance Scan with Docker
 - script: |
     docker pull 42crunch/scand-agent:v2
-    docker run -e SCAN_TOKEN=$(savescanconfig.SCANV2_TOKEN) -e SCAN42C_HOST=$(PIXI_HOST) -e SCAN42C_SECURITY_ACCESS_TOKEN=$(PIXI_token) -e PLATFORM_SERVICE=$(platformService) 42crunch/scand-agent:v2
+    docker run -e SCAN_TOKEN=$(savescanconfig.SCANV2_TOKEN) -e SCAN42C_HOST=$(PIXI_HOST) -e PLATFORM_SERVICE=$(platformService) 42crunch/scand-agent:v2
     echo "Scan report: $(platformUrl)/apis/$(API_UUID)/scan"
   displayName: 'Pull and Run 42Crunch Docker Image'
 
