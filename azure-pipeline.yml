@@ -79,6 +79,11 @@ steps:
 #     jsonReport: 'audit-action-report-$(Build.BuildId).json'
 #     sarifReport: 'audit-report-$(Build.BuildId).sarif'
 
+- script: |
+    echo "Checking if SARIF report exists..."
+    ls -l $(Build.Repository.LocalPath)
+  displayName: 'Check SARIF Report Existence'
+
 # Optional: Use the following script to check the audit SARIF report
 - task: CmdLine@2
   displayName: 'Check Audit SARIF Report'
