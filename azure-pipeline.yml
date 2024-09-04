@@ -152,7 +152,7 @@ steps:
     scriptSource: 'filePath' # Options: filePath, inline
     scriptPath: $(Build.Repository.LocalPath)/scripts/conformance_scan_v2.py
     #script: # Required when scriptSource == inline
-    arguments: -c $(42C_API_TOKEN) -p $(platformUrl) -a $(API_UUID) -n $(config_name) -t scan_token.json -f $(Build.Repository.LocalPath)/.42c/scan/$(API_ALIAS_ID)/scanconf.json --action upload_conf
+    arguments: -c $(API_KEY) -p $(platformUrl) -a $(API_UUID) -n $(config_name) -t scan_token.json -f $(Build.Repository.LocalPath)/.42c/scan/$(API_ALIAS_ID)/scanconf.json --action upload_conf
 
 # Option #2 - Create default Scan V2 Configuration from the OpenAPI Definition
 # - task: PythonScript@0
