@@ -70,12 +70,10 @@ steps:
 - task: APIContractSecurityAudit@5
   displayName: Auditing OAS Files
   inputs:
-    apiToken: '$(42C_API_TOKEN)'
+    apiToken: '$(API_KEY)'
     minScore: '75'
     platformUrl: '$(platformUrl)'
     logLevel: DEBUG
-    defaultCollectionName: 'AzureDevOps heshaam-42c/platform-demo Branch:main'
-    ignoreFailures: 'false'
     jsonReport: 'audit-action-report-$(Build.BuildId).json'
     sarifReport: 'audit-report-$(Build.BuildId).sarif'
 
