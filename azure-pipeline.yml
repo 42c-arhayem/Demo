@@ -150,7 +150,7 @@ steps:
   displayName: Update Scan V2 Configuration
   inputs:
     scriptSource: 'filePath' # Options: filePath, inline
-    scriptPath: $(Build.Repository.LocalPath)/scripts/conformance_scanv2.py
+    scriptPath: /workspace/scripts/conformance_scanv2.py
     #script: # Required when scriptSource == inline
     arguments: -c $(42C_API_TOKEN) -p $(platformUrl) -a $(API_UUID) -n $(config_name) -t scan_token.json -f $(Build.Repository.LocalPath)/.42c/scan/$(API_ALIAS_ID)/scanconf.json --action upload_conf
 
@@ -170,7 +170,7 @@ steps:
   name: savescanconfig
   inputs:
     script: |
-      scan_content=$(cat $(Build.Repository.LocalPath)/scan_token.json | jq -r '.scan_token')
+      scan_content=$(cat /workspace/scan_token.json | jq -r '.scan_token')
       scan_token=$(echo $scan_content | cut -d',' -f1)
       echo "Scan V2 Token: $scan_token"
       echo "##vso[task.setvariable variable=SCANV2_TOKEN;isoutput=true]$scan_token"
