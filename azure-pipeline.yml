@@ -57,6 +57,7 @@ steps:
 # 42Crunch API Security Audit using the Docker Image
 - script: |
     docker run -v "$(Build.Repository.LocalPath):/workspace" \
+               --user $(id -u):$(id -g) \
                -e X42C_REPOSITORY_URL=https://github.com/42c-arhayem/Demo \
                -e X42C_PLATFORM_URL=$(platformUrl) \
                -e X42C_API_TOKEN=$(X42C_API_TOKEN) \
