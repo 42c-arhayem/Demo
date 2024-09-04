@@ -65,7 +65,7 @@ steps:
                -e X42C_LOG_LEVEL=DEBUG \
                -e X42C_JSON_REPORT=audit-action-report-$(Build.BuildId).json \
                -e X42C_SARIF_REPORT=audit-report-$(Build.BuildId).sarif \
-               42crunch/docker-api-security-audit:v3.4
+               42crunch/docker-api-security-audit:v3
   displayName: 'Run 42Crunch Audit Docker Image'
 
 # 42Crunch API Security Audit using the Audit Plugin
