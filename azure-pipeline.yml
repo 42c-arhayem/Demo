@@ -55,29 +55,29 @@ steps:
   displayName: 'Install tools'
 
 # 42Crunch API Security Audit using the Docker Image
-# - script: |
-#     docker run -v "$(Build.Repository.LocalPath):/workspace" \
-#                -e X42C_REPOSITORY_URL=https://github.com/42c-arhayem/Demo \
-#                -e X42C_PLATFORM_URL=$(platformUrl) \
-#                -e X42C_API_TOKEN=$(X42C_API_TOKEN) \
-#                -e X42C_BRANCH_NAME=main \
-#                -e X42C_LOG_LEVEL=DEBUG \
-#                -e jsonReport=/workspace/audit-action-report-$(Build.BuildId).json \
-#                -e sarifReport=/workspace/audit-report-$(Build.BuildId).sarif \
-#                42crunch/docker-api-security-audit:v3.4
-#   displayName: 'Run 42Crunch Audit Docker Image'
+- script: |
+    docker run -v "$(Build.Repository.LocalPath):/workspace" \
+               -e X42C_REPOSITORY_URL=https://github.com/42c-arhayem/Demo \
+               -e X42C_PLATFORM_URL=$(platformUrl) \
+               -e X42C_API_TOKEN=$(X42C_API_TOKEN) \
+               -e X42C_BRANCH_NAME=main \
+               -e X42C_LOG_LEVEL=DEBUG \
+               -e jsonReport=/workspace/audit-action-report-$(Build.BuildId).json \
+               -e sarifReport=/workspace/audit-report-$(Build.BuildId).sarif \
+               42crunch/docker-api-security-audit:v3.4
+  displayName: 'Run 42Crunch Audit Docker Image'
 
 # 42Crunch API Security Audit using the Audit Plugin
-- task: APIContractSecurityAudit@5
-  displayName: Auditing OAS Files
-  inputs:
-    apiToken: '$(X42C_API_TOKEN)'
-    platformServiceConnection: '42Crunch Platform Connection'
-    minScore: '75'
-    platformUrl: '$(platformUrl)'
-    logLevel: DEBUG
-    jsonReport: 'audit-action-report-$(Build.BuildId).json'
-    sarifReport: 'audit-report-$(Build.BuildId).sarif'
+# - task: APIContractSecurityAudit@5
+#   displayName: Auditing OAS Files
+#   inputs:
+#     apiToken: '$(X42C_API_TOKEN)'
+#     platformServiceConnection: '42Crunch Platform Connection'
+#     minScore: '75'
+#     platformUrl: '$(platformUrl)'
+#     logLevel: DEBUG
+#     jsonReport: 'audit-action-report-$(Build.BuildId).json'
+#     sarifReport: 'audit-report-$(Build.BuildId).sarif'
 
 - script: |
     echo "Checking if SARIF report exists..."
