@@ -122,9 +122,7 @@ steps:
     script: |
       echo "Audit JSON Report:"
       cat $(Build.Repository.LocalPath)/.42c/conf.yaml
-
-      aliasId=$(cat $(Build.Repository.LocalPath)/.42c/conf.yaml | yq '.apis."OAS Files/Pixi App Good Scan.json".alias')
-
+      aliasId=$(yq '.apis."OAS Files/Pixi App Good Scan.json".alias' < $(Build.Repository.LocalPath)/.42c/conf.yaml)
       printf "\n"
       echo "Pixi API AliasId: $aliasId"
       echo "##vso[task.setvariable variable=API_ALIAS_ID]$aliasId"
