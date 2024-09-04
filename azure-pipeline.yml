@@ -61,8 +61,8 @@ steps:
                -e X42C_API_TOKEN=$(API_KEY) \
                -e X42C_BRANCH_NAME=main \
                -e X42C_LOG_LEVEL=DEBUG \
-               -e jsonReport=audit-action-report-$(Build.BuildId).json \
-               -e sarifReport=audit-report-$(Build.BuildId).sarif \
+               -e jsonReport=/workspace/audit-action-report-$(Build.BuildId).json \
+               -e sarifReport=/workspace/audit-report-$(Build.BuildId).sarif \
                42crunch/docker-api-security-audit:v3.4
   displayName: 'Run 42Crunch Audit Docker Image'
 
