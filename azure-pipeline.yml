@@ -10,11 +10,11 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  kubernetesConnection: 'platform-demos-apis-hesh'
+  # kubernetesConnection: 'platform-demos-apis-hesh'
   platformUrl: 'https://demolabs.42crunch.cloud'
   platformService: 'services.demolabs.42crunch.cloud:8001'
-  azureResourceGroup: Demos
-  namespace: hesh
+  # azureResourceGroup: Demos
+  # namespace: hesh
   # API_UUID: 9273b0fc-ab90-4325-9fcb-a6f504e07840
 
   config_name: azureDevOps
@@ -49,9 +49,10 @@ steps:
 # Install Docker
 - task: DockerInstaller@0
   displayName: 'Install Docker'
-  
+
 - script: python -m pip install requests --upgrade pip
   displayName: 'Install tools'
+
 # 42Crunch API Security Audit using the Docker Image
 - script: |
     docker run -v "$(Build.Repository.LocalPath):/workspace" \
@@ -62,7 +63,6 @@ steps:
                -e X42C_LOG_LEVEL=DEBUG \
                -e jsonReport=audit-action-report-$(Build.BuildId).json \
                -e sarifReport=audit-report-$(Build.BuildId).sarif \
-               -e X42C_IGNORE_FAILURES=true \
                42crunch/docker-api-security-audit:v3.4
   displayName: 'Run 42Crunch Audit Docker Image'
 
