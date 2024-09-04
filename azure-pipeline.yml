@@ -13,11 +13,12 @@ variables:
   # kubernetesConnection: 'platform-demos-apis-hesh'
   platformUrl: 'https://demolabs.42crunch.cloud'
   platformService: 'services.demolabs.42crunch.cloud:8001'
+  X42C_API_TOKEN: $(API_KEY)
   # azureResourceGroup: Demos
   # namespace: hesh
   # API_UUID: 9273b0fc-ab90-4325-9fcb-a6f504e07840
 
-  config_name: azureDevOps
+  config_name: azureDevOps_demo
   #Testing only!
   PIXI_user: "barbara8@demo.mail"
   PIXI_pass: "ball"
@@ -58,7 +59,7 @@ steps:
 #     docker run -v "$(Build.Repository.LocalPath):/workspace" \
 #                -e X42C_REPOSITORY_URL=https://github.com/42c-arhayem/Demo \
 #                -e X42C_PLATFORM_URL=$(platformUrl) \
-#                -e X42C_API_TOKEN=$(API_KEY) \
+#                -e X42C_API_TOKEN=$(X42C_API_TOKEN) \
 #                -e X42C_BRANCH_NAME=main \
 #                -e X42C_LOG_LEVEL=DEBUG \
 #                -e jsonReport=/workspace/audit-action-report-$(Build.BuildId).json \
@@ -70,7 +71,7 @@ steps:
 - task: APIContractSecurityAudit@5
   displayName: Auditing OAS Files
   inputs:
-    apiToken: '$(API_KEY)'
+    apiToken: '$(X42C_API_TOKEN)'
     platformServiceConnection: '42Crunch Platform Connection'
     minScore: '75'
     platformUrl: '$(platformUrl)'
@@ -122,7 +123,7 @@ steps:
     script: |
       echo "Audit JSON Report:"
       cat $(Build.Repository.LocalPath)/.42c/conf.yaml
-      aliasId=$(yq '.apis."OAS Files/Pixi App Good Scan.json".alias' < $(Build.Repository.LocalPath)/.42c/conf.yaml)
+      aliasId=$(yq '.apis.["OAS Files/Pixi App Good Scan.json"].alias' < $(Build.Repository.LocalPath)/.42c/conf.yaml)
       printf "\n"
       echo "Pixi API AliasId: $aliasId"
       echo "##vso[task.setvariable variable=API_ALIAS_ID]$aliasId"
@@ -142,16 +143,16 @@ steps:
 # Two options - 
 #   1. Upload scan config from file
 #   2. Create default scan config from OpenAPI definition
-#
+
 # Option #1 - Upload Scan V2 Configuration from file
-# - task: PythonScript@0
-#   name: uploadscanconfig
-#   displayName: Update Scan V2 Configuration
-#   inputs:
-#     scriptSource: 'filePath' # Options: filePath, inline
-#     scriptPath: $(Build.Repository.LocalPath)/scripts/conformance_scanv2.py
-#     #script: # Required when scriptSource == inline
-#     arguments: -c $(42C_API_TOKEN) -p $(platformUrl) -a $(API_UUID) -n $(config_name) -t scan_token.json -f $(Build.Repository.LocalPath)/.42c/scan/$(API_ALIAS_ID)/scanconf.json --action upload_conf
+- task: PythonScript@0
+  name: uploadscanconfig
+  displayName: Update Scan V2 Configuration
+  inputs:
+    scriptSource: 'filePath' # Options: filePath, inline
+    scriptPath: $(Build.Repository.LocalPath)/scripts/conformance_scanv2.py
+    #script: # Required when scriptSource == inline
+    arguments: -c $(42C_API_TOKEN) -p $(platformUrl) -a $(API_UUID) -n $(config_name) -t scan_token.json -f $(Build.Repository.LocalPath)/.42c/scan/$(API_ALIAS_ID)/scanconf.json --action upload_conf
 
 # Option #2 - Create default Scan V2 Configuration from the OpenAPI Definition
 # - task: PythonScript@0
