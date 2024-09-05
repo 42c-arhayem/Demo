@@ -64,7 +64,7 @@ steps:
                -e X42C_BRANCH_NAME=main \
                -e X42C_LOG_LEVEL=DEBUG \
                -e X42C_JSON_REPORT=audit-action-report-$(Build.BuildId).json \
-               -e X42C_SARIF_REPORT=audit-report-$(Build.BuildId).sarif \
+              #  -e X42C_SARIF_REPORT=audit-report-$(Build.BuildId).sarif \
                42crunch/docker-api-security-audit:v3
   displayName: 'Run 42Crunch Audit Docker Image'
 
@@ -80,18 +80,13 @@ steps:
 #     jsonReport: 'audit-action-report-$(Build.BuildId).json'
 #     sarifReport: 'audit-report-$(Build.BuildId).sarif'
 
-- script: |
-    echo "Checking if SARIF report exists..."
-    ls -l $(Build.Repository.LocalPath)
-  displayName: 'Check SARIF Report Existence'
-
 # Optional: Use the following script to check the audit SARIF report
-- task: CmdLine@2
-  displayName: 'Check Audit SARIF Report'
-  inputs:
-    script: |
-      echo "Audit Sarif Report:"
-      cat $(Build.Repository.LocalPath)/audit-report-$(Build.BuildId).sarif | jq . | head -n 50
+# - task: CmdLine@2
+#   displayName: 'Check Audit SARIF Report'
+#   inputs:
+#     script: |
+#       echo "Audit Sarif Report:"
+#       cat $(Build.Repository.LocalPath)/audit-report-$(Build.BuildId).sarif | jq . | head -n 50
 
 # # Optional: fetch an access token from the Pixi API
 # - task: CmdLine@2
