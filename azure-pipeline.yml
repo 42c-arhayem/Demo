@@ -15,8 +15,7 @@ variables:
   platformService: 'services.demolabs.42crunch.cloud:8001'
   X42C_API_TOKEN: $(API_KEY)
   # azureResourceGroup: Demos
-  # namespace: hesh
-  # API_UUID: 9273b0fc-ab90-4325-9fcb-a6f504e07840
+  # namespace: ali
 
   config_name: azureDevOps_demo
   #Testing only!
@@ -145,7 +144,7 @@ steps:
   displayName: Update Scan V2 Configuration
   inputs:
     scriptSource: 'filePath' # Options: filePath, inline
-    scriptPath: $(Build.Repository.LocalPath)/scripts/conformance_scan_v2.py
+    scriptPath: $(Build.Repository.LocalPath)/scripts/conformance_scanv2.py
     #script: # Required when scriptSource == inline
     arguments: -c $(API_KEY) -p $(platformUrl) -a $(API_UUID) -n $(config_name) -t scan_token.json -f $(Build.Repository.LocalPath)/.42c/scan/$(API_ALIAS_ID)/scanconf.json --action upload_conf
 
