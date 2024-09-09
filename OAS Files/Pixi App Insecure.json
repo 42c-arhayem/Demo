@@ -66,13 +66,7 @@
                                       "x-42c-format": "o:username"
                                     },
                                     "pass": {
-                                      "type": "string",
-                                      "format": "o:common:password",
-                                      "example": "",
-                                      "pattern": "^[a-zA-Z0-9&@#!?]{8,64}$",
-                                      "minLength": 8,
-                                      "maxLength": 64,
-                                      "x-42c-format": "o:common:password"
+                                      "type": "string"
                                     }
                                 }
                             }
