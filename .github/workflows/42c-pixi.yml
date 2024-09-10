@@ -58,7 +58,7 @@ jobs:
         run: |
           echo "Audit JSON Report:"
           cat ${{ github.workspace }}/audit-action-report-${{ github.run_id }}.json
-          apiId=$(cat ${{ github.workspace }}/audit-action-report-${{ github.run_id }}.json | jq -r '.audit.report.["OAS Files/Pixi App Good Scan.json"].apiId')
+          apiId=$(cat ${{ github.workspace }}/audit-action-report-${{ github.run_id }}.json | jq -r '.audit.report["OAS Files/Pixi App Good Scan.json"].apiId')
           echo "PIXI API UUID: $apiId"
           echo "::set-output name=API_UUID::$apiId"
 
