@@ -14,7 +14,7 @@ read -p "Enter your choice (1 or 2): " choice
 base_dir="$(dirname "$(pwd)")"
 
 # Define the Helm chart path using the absolute path
-helm_chart_dir="$base_dir/Demo/artifacts/42c-pixiapi"
+helm_chart_dir="$base_dir/artifacts/42c-pixiapi"
 
 # Verify the directory exists
 if [ ! -d "$helm_chart_dir" ]; then

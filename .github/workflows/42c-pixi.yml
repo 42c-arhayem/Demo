@@ -1,0 +1,99 @@
+name: 42c-Bank Audit & Scan
+
+# Trigger on push or pull requests to the main branch
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      platformUrl: 'https://demolabs.42crunch.cloud'
+      platformService: 'services.demolabs.42crunch.cloud:8001'
+      X42C_API_TOKEN: ${{ secrets.API_TOKEN }} # Use GitHub Secrets
+      API_URL: 'https://photo-demo.westeurope.cloudapp.azure.com/ali/api'
+
+    steps:
+      # Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Setup Python
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      # Set up Docker
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      # Install Python tools
+      - name: Install Python dependencies
+        run: |
+          python -m pip install requests --upgrade pip
+
+      # 42Crunch API Security Audit using Docker Image
+      - name: Run 42Crunch Audit Docker Image
+        run: |
+          docker run -v "${{ github.workspace }}:/workspace" \
+            --user 0:0 \
+            -e X42C_REPOSITORY_URL=https://github.com/42c-arhayem/Demo \
+            -e X42C_PLATFORM_URL=${{ env.platformUrl }} \
+            -e X42C_API_TOKEN=${{ env.X42C_API_TOKEN }} \
+            -e X42C_BRANCH_NAME=main \
+            -e X42C_LOG_LEVEL=DEBUG \
+            -e X42C_JSON_REPORT=audit-action-report-${{ github.run_id }}.json \
+            42crunch/docker-api-security-audit:v3
+
+      # Fetch Bank API UUID from the Audit Summary Report
+      - name: Check Audit Summary Report
+        id: Check_Audit
+        run: |
+          echo "Audit JSON Report:"
+          cat ${{ github.workspace }}/audit-action-report-${{ github.run_id }}.json
+          apiId=$(cat ${{ github.workspace }}/audit-action-report-${{ github.run_id }}.json | jq -r '.audit.report.["OAS Files/Pixi App Good Scan.json"].apiId')
+          echo "PIXI API UUID: $apiId"
+          echo "::set-output name=API_UUID::$apiId"
+
+      # Fetch Bank API AliasId from the .42c/conf.yaml
+      - name: Fetch API AliasId
+        id: Fetch_API_AliasId
+        run: |
+          echo "Audit JSON Report:"
+          cat ${{ github.workspace }}/.42c/conf.yaml
+          aliasId=$(yq '.apis.["OAS Files/Pixi App Good Scan.json"].alias' < ${{ github.workspace }}/.42c/conf.yaml)
+          echo "PIXI API AliasId: $aliasId"
+          echo "::set-output name=API_ALIAS_ID::$aliasId"
+
+      # Upload Scan V2 Configuration
+      - name: Upload Scan Configuration and Fetch Token
+        id: upload_scan_config
+        run: |
+          python3 ${{ github.workspace }}/scripts/conformance_scanv2.py \
+            -c ${{ secrets.API_TOKEN }} \
+            -p ${{ env.platformUrl }} \
+            -a ${{ steps.Check_Audit.outputs.API_UUID }} \
+            -t scan_token.json \
+            -f ${{ github.workspace }}/.42c/scan/${{ steps.Fetch_API_AliasId.outputs.API_ALIAS_ID }}/scanconf.json --action upload_conf
+          scan_token=$(cat ${{ github.workspace }}/scan_token.json | jq -r '.scan_token')
+          echo "SCAN_TOKEN=$scan_token" >> $GITHUB_ENV  # Save to GITHUB_ENV to pass between steps
+          echo "Scan token is $scan_token"
+          cat ${{ github.workspace }}/scan_token.json
+
+      # Pull and Run 42Crunch Docker Image
+      - name: Pull and Run 42Crunch Docker Image
+        run: |
+          echo "Scan token is $SCAN_TOKEN"
+          docker pull 42crunch/scand-agent:v2
+          docker run -e SCAN_TOKEN=$SCAN_TOKEN \
+            -e SCAN42C_HOST=${{ env.API_URL }} \
+            -e PLATFORM_SERVICE=${{ env.platformService }} \
+            42crunch/scand-agent:v2
+          echo "Scan report: ${{ env.platformUrl }}/apis/${{ steps.Check_Audit.outputs.API_UUID }}/scan"
