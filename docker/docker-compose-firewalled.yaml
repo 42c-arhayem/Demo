@@ -1,0 +1,42 @@
+services:
+  db:
+    image: 42crunch/pixi:mongo
+    command: mongod --quiet
+    container_name: pixidb
+    ports:
+      - "27017:27017"
+      - "28017:28017"
+
+  api:
+     image: heshaam/pixi:latest
+     container_name: pixiapi
+    # build: ./app
+     ports:
+       - "8090:8090"
+     expose:
+       - 8090
+
+  apifw:
+    image: 42crunch/apifirewall:latest
+    container_name: 42crunch-api-firewall
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./artifacts/api-firewall/ssl:/opt/guardian/conf/ssl
+    command:
+      ["/bin/squire", "-platform", "protection.demolabs.42crunch.cloud:8001", "-debug"]
+    environment:
+      - SERVER_NAME=localhost:8080
+      - LISTEN_PORT=8080
+      - PROTECTION_TOKEN=${PROTECTION_TOKEN}
+      - GUARDIAN_NODE_NAME=Local-Firewall
+      - GUARDIAN_INSTANCE_NAME=Local-Firewall
+      - LISTEN_SSL_CERT=firewall-cert.pem
+      - LISTEN_SSL_KEY=firewall-key.pem
+      - LISTEN_NO_TLS=true
+      - LOG_LEVEL=DEBUG
+      - TARGET_URL=http://api:8090
+    depends_on:
+      - db
+      - api
+    env_file: ".env"
