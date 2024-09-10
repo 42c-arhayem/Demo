@@ -1,4 +1,4 @@
-name: 42c-Bank Audit & Scan
+name: Pixi Audit & Scan
 
 # Trigger on push or pull requests to the main branch
 on:
