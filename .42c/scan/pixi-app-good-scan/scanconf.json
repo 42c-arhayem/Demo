@@ -377,7 +377,7 @@
             "requestBody": {
               "mode": "json",
               "json": {
-                "email": "{{email}}",
+                "email": "misty94@demo.mail",
                 "name": "{{name}}",
                 "account_balance": "{{amount}}"
               }
@@ -387,8 +387,7 @@
         "defaultResponse": "200",
         "environment": {
           "amount": "{{amount}}",
-          "name": "{{name}}",
-          "email": "{{email}}"
+          "name": "{{name}}"
         },
         "responses": {
           "200": {
@@ -413,11 +412,11 @@
           "key": "happy.path",
           "requests": [
             {
+              "fuzzing": true,
               "$ref": "#/operations/edituserinfo/request",
               "environment": {
-                "amount": "1000000",
-                "name": "Balance hacked",
-                "email": "misty94@demo.mail"
+                "amount": "10000",
+                "name": "Hacked"
               }
             }
           ],
@@ -583,7 +582,7 @@
             {
               "$ref": "#/operations/deleteUser/request",
               "environment": {
-                "userid": "{{registerUserId}}"
+                "deleteUserId": "{{registerUserId}}"
               }
             }
           ],
@@ -796,13 +795,7 @@
       "scenarios": [
         {
           "key": "happy.path",
-          "requests": [
-            {
-              "fuzzing": true,
-              "$ref": "#/operations/userinfo/request",
-              "expectedResponse": "200"
-            }
-          ],
+          "requests": [],
           "fuzzing": true
         }
       ]
@@ -1036,6 +1029,15 @@
                           "type": "jsonPointer",
                           "value": "/token"
                         }
+                      },
+                      "user1_id": {
+                        "from": "response",
+                        "in": "body",
+                        "contentType": "json",
+                        "path": {
+                          "type": "jsonPointer",
+                          "value": "/_id"
+                        }
                       }
                     }
                   }
@@ -1049,8 +1051,8 @@
               {
                 "$ref": "#/operations/authenticate/request",
                 "environment": {
-                  "username": "barbara8@demo.mail",
-                  "password": "ball"
+                  "username": "userscan-run@demo.mail",
+                  "password": "hellopixi"
                 },
                 "responses": {
                   "200": {
@@ -1058,7 +1060,7 @@
                       "httpStatus": 200
                     },
                     "variableAssignments": {
-                      "user3_token": {
+                      "user2_token": {
                         "in": "body",
                         "from": "response",
                         "contentType": "json",
@@ -1067,7 +1069,7 @@
                           "value": "/token"
                         }
                       },
-                      "user3_id": {
+                      "user2_id": {
                         "in": "body",
                         "from": "response",
                         "contentType": "json",
@@ -1114,45 +1116,6 @@
                         "path": {
                           "type": "jsonPointer",
                           "value": "/token"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            ]
-          },
-          "admin2delete": {
-            "credential": "{{admin2deleteToken}}",
-            "requests": [
-              {
-                "$ref": "#/operations/authenticate/request",
-                "environment": {
-                  "username": "admin2delete@demo.mail",
-                  "password": "hellppixi"
-                },
-                "responses": {
-                  "200": {
-                    "expectations": {
-                      "httpStatus": 200
-                    },
-                    "variableAssignments": {
-                      "admin2deleteToken": {
-                        "in": "body",
-                        "from": "response",
-                        "contentType": "json",
-                        "path": {
-                          "type": "jsonPointer",
-                          "value": "/token"
-                        }
-                      },
-                      "admin2deleteId": {
-                        "in": "body",
-                        "from": "response",
-                        "contentType": "json",
-                        "path": {
-                          "type": "jsonPointer",
-                          "value": "/_id"
                         }
                       }
                     }
