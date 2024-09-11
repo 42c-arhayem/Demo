@@ -1264,7 +1264,7 @@
         "admin-user/admin1"
       ],
       "target": [
-        "access-token/User1"
+        "dynamic-token/User1"
       ]
     },
     "BadTokenSwap": {
