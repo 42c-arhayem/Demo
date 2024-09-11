@@ -377,7 +377,7 @@
             "requestBody": {
               "mode": "json",
               "json": {
-                "email": "adminpixi@demo.mail",
+                "email": "{{email}}",
                 "name": "{{name}}",
                 "account_balance": "{{amount}}"
               }
@@ -387,7 +387,8 @@
         "defaultResponse": "200",
         "environment": {
           "amount": "{{amount}}",
-          "name": "{{name}}"
+          "name": "{{name}}",
+          "email": "{{email}}"
         },
         "responses": {
           "200": {
@@ -407,41 +408,6 @@
           }
         }
       },
-      "after": [
-        {
-          "$ref": "#/operations/authenticate/request",
-          "environment": {
-            "username": "hacker@demo.mail",
-            "password": "hellopixi"
-          },
-          "responses": {
-            "200": {
-              "expectations": {
-                "httpStatus": 200
-              },
-              "variableAssignments": {
-                "scanUserToken": {
-                  "in": "body",
-                  "from": "response",
-                  "contentType": "json",
-                  "path": {
-                    "type": "jsonPointer",
-                    "value": "/token"
-                  }
-                }
-              }
-            }
-          }
-        },
-        {
-          "$ref": "#/operations/edituserinfo/request",
-          "environment": {
-            "amount": "500",
-            "name": "User Common",
-            "email": "userscan-run@demo.mail"
-          }
-        }
-      ],
       "scenarios": [
         {
           "key": "happy.path",
@@ -450,16 +416,14 @@
               "fuzzing": true,
               "$ref": "#/operations/edituserinfo/request",
               "environment": {
-                "amount": "1000",
-                "name": "Account Compromised"
+                "amount": "1000000",
+                "name": "Balance hacked",
+                "email": "misty94@demo.mail"
               }
             }
           ],
           "fuzzing": true
         }
-      ],
-      "authorizationTests": [
-        "EditUserInfo"
       ]
     },
     "listUserPictures": {
@@ -982,8 +946,8 @@
           },
           "variableAssignments": {
             "id": {
-              "from": "response",
               "in": "body",
+              "from": "response",
               "contentType": "json",
               "path": {
                 "type": "jsonPointer",
@@ -1249,7 +1213,7 @@
         "access-token/User1"
       ],
       "target": [
-        "dynamic-token/User2"
+        "dynamic-token/User1"
       ]
     },
     "DeleteUser": {
