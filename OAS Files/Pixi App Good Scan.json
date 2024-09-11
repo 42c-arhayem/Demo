@@ -14,7 +14,7 @@
     },
     "servers": [
         {
-            "url": "https://photo-demo.westeurope.cloudapp.azure.com/ali1/api"
+            "url": "https://photo-demo.westeurope.cloudapp.azure.com/ali/api"
         }
     ],
     "tags": [
@@ -1112,6 +1112,11 @@
                         "type": "number",
                         "description": "remaining balance",
                         "format": "float"
+                    },
+                    "is_admin": {
+                        "type": "boolean",
+                        "description": "is admin",
+                        "example": true
                     }
                 }
             },
