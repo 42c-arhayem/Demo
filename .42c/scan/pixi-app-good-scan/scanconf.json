@@ -413,7 +413,6 @@
           "key": "happy.path",
           "requests": [
             {
-              "fuzzing": true,
               "$ref": "#/operations/edituserinfo/request",
               "environment": {
                 "amount": "1000000",
