@@ -412,6 +412,20 @@
           "key": "happy.path",
           "requests": [
             {
+              "$ref": "#/operations/authenticate/request",
+              "environment": {
+                "username": "misty94@demo.mail",
+                "password": "ball"
+              },
+              "responses": {
+                "200": {
+                  "expectations": {
+                    "httpStatus": 200
+                  }
+                }
+              }
+            },
+            {
               "fuzzing": true,
               "$ref": "#/operations/edituserinfo/request",
               "environment": {
@@ -795,12 +809,7 @@
       "scenarios": [
         {
           "key": "happy.path",
-          "requests": [
-            {
-              "fuzzing": true,
-              "$ref": "#/operations/userinfo/request"
-            }
-          ],
+          "requests": [],
           "fuzzing": true
         }
       ]
