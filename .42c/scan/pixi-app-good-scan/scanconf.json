@@ -795,7 +795,12 @@
       "scenarios": [
         {
           "key": "happy.path",
-          "requests": [],
+          "requests": [
+            {
+              "fuzzing": true,
+              "$ref": "#/operations/userinfo/request"
+            }
+          ],
           "fuzzing": true
         }
       ]
