@@ -155,7 +155,7 @@
               "httpStatus": 200
             },
             "variableAssignments": {
-              "token_1": {
+              "scanUserToken": {
                 "in": "body",
                 "from": "response",
                 "contentType": "json",
@@ -412,6 +412,9 @@
         {
           "key": "happy.path",
           "requests": [
+            {
+              "$ref": "#/operations/authenticate/request"
+            },
             {
               "fuzzing": true,
               "$ref": "#/operations/edituserinfo/request",
