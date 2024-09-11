@@ -1002,10 +1002,6 @@
             "requests": [
               {
                 "$ref": "#/operations/authenticate/request",
-                "environment": {
-                  "username": "userscan-run@demo.mail",
-                  "password": "hellopixi"
-                },
                 "responses": {
                   "200": {
                     "expectations": {
