@@ -1242,7 +1242,7 @@
         "access-token/User1"
       ],
       "target": [
-        "dynamic-token/User1"
+        "dynamic-token/User2"
       ]
     },
     "DeleteUser": {
@@ -1251,7 +1251,7 @@
         "admin-user/admin1"
       ],
       "target": [
-        "dynamic-token/User1"
+        "access-token/User1"
       ]
     },
     "AdminOnlyOps": {
@@ -1260,7 +1260,7 @@
         "admin-user/admin1"
       ],
       "target": [
-        "dynamic-token/User1"
+        "access-token/User1"
       ]
     },
     "BadTokenSwap": {
@@ -1287,7 +1287,7 @@
         "access-token/User1"
       ],
       "target": [
-        "dynamic-token/User1"
+        "dynamic-token/User2"
       ]
     }
   },
