@@ -37,8 +37,8 @@ if [ $? -eq 0 ]; then
             echo "New pod name: $new_pod_name"
 
             # JSON data for the API request 
-            json_data_user_inbound='{"user": "user-inbound@acme.com","pass": "hellopixi","name": "User Inbound","is_admin": false,"account_balance": 1000}'
-            json_data_user_common='{"user": "userscan-run@acme.com","pass": "hellopixi","name": "User Common","is_admin": false,"account_balance": 1000}'
+            json_data_user_inbound='{"user": "user-inbound@demo.mail","pass": "hellopixi","name": "User Inbound","is_admin": false,"account_balance": 1000}'
+            json_data_user_common='{"user": "userscan-run@demo.mail","pass": "hellopixi","name": "User Common","is_admin": false,"account_balance": 1000}'
 
             # Invoke the API using curl with POST method and passing the JSON data
             api_url="https://photo-demo.westeurope.cloudapp.azure.com/$namespace/api/user/register"
@@ -47,19 +47,17 @@ if [ $? -eq 0 ]; then
 
             # Check the curl response
             if [ $? -eq 0 ]; then
-                echo "API Response:"
-                echo "Inbound user: $curl_response_inbound"
-                echo "Common User: $curl_response_common"
+                echo "Users registered successfully."
 
-                # Extract the token from the JSON response using jq
-                token=$(echo "$curl_response_common" | jq -r '.token')
+            #     # Extract the token from the JSON response using jq
+            #     token=$(echo "$curl_response_common" | jq -r '.token')
 
-                if [ -n "$token" ]; then
-                    echo "Token to use as parameter SCAN42C_SECURITY_COMMON_ACCESS_TOKEN : $token"
-                    export PIXI_TOKEN="$token"
-                else
-                    echo "Error: Failed to extract token from API response."
-                fi
+            #     if [ -n "$token" ]; then
+            #         echo "Token to use as parameter SCAN42C_SECURITY_COMMON_ACCESS_TOKEN : $token"
+            #         export PIXI_TOKEN="$token"
+            #     else
+            #         echo "Error: Failed to extract token from API response."
+            #     fi
 
             else
                 echo "Error: Failed to invoke the API."
