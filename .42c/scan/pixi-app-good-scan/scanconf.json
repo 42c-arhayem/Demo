@@ -510,6 +510,9 @@
           ],
           "fuzzing": true
         }
+      ],
+      "authorizationTests": [
+        "ListUserPictures"
       ]
     },
     "register": {
@@ -1050,8 +1053,8 @@
                         }
                       },
                       "user1_id": {
-                        "from": "response",
                         "in": "body",
+                        "from": "response",
                         "contentType": "json",
                         "path": {
                           "type": "jsonPointer",
@@ -1212,7 +1215,7 @@
         "admin-user/admin1"
       ],
       "target": [
-        "access-token/User1"
+        "dynamic-token/User1"
       ]
     },
     "BadTokenSwap": {
@@ -1231,6 +1234,15 @@
       ],
       "target": [
         "bad-jwts/BadAudience"
+      ]
+    },
+    "ListUserPictures": {
+      "key": "authentication-swapping-bfla",
+      "source": [
+        "access-token/User1"
+      ],
+      "target": [
+        "dynamic-token/User1"
       ]
     }
   },
@@ -1270,6 +1282,12 @@
         "details": {
           "method": "POST",
           "url": "{{host}}/user/register",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
           "requestBody": {
             "mode": "json",
             "json": {
