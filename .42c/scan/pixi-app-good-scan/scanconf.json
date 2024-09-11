@@ -377,7 +377,7 @@
             "requestBody": {
               "mode": "json",
               "json": {
-                "email": "userscan-run@demo.mail",
+                "email": "adminpixi@demo.mail",
                 "name": "{{name}}",
                 "account_balance": "{{amount}}"
               }
@@ -559,12 +559,15 @@
                 "is_admin": false,
                 "name": "RandomPixiUser",
                 "pass": "{{password}}",
-                "user": "register@demo.mail"
+                "user": "{{username}}"
               }
             }
           }
         },
         "defaultResponse": "200",
+        "environment": {
+          "username": "{{username}}"
+        },
         "responses": {
           "200": {
             "expectations": {
@@ -591,6 +594,10 @@
               "fuzzing": true,
               "$ref": "#/operations/register/request",
               "expectedResponse": "200",
+              "environment": {
+                "username": "register@demo.mail",
+                "password": "hellopixi"
+              },
               "responses": {
                 "200": {
                   "expectations": {
