@@ -696,7 +696,7 @@
       "request": {
         "operationId": "uploadPictureFromFile",
         "auth": [
-          "admin-user"
+          "access-token"
         ],
         "request": {
           "type": "42c",
@@ -880,7 +880,7 @@
       "request": {
         "operationId": "userSearch",
         "auth": [
-          "access-token"
+          "admin-user"
         ],
         "request": {
           "type": "42c",
