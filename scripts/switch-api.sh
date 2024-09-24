@@ -46,7 +46,7 @@ sleep 20
 
 # JSON data for the API request 
 json_data_user_inbound='{"user": "user-inbound@demo.mail","pass": "hellopixi","name": "User Inbound","is_admin": false,"account_balance": 1000}'
-json_data_user_common='{"user": "userscan-run@demo.mail.com","pass": "hellopixi","name": "User Common","is_admin": false,"account_balance": 1000}'
+json_data_user_common='{"user": "userscan-run@demo.mail","pass": "hellopixi","name": "User Common","is_admin": false,"account_balance": 1000}'
 
 # Invoke the API using curl with POST method and passing the JSON data
 api_url="https://photo-demo.westeurope.cloudapp.azure.com/$namespace/api/user/register"

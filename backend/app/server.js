@@ -171,7 +171,7 @@ function api_register(user, pass, req, res) {
 								algorithm: 'RS384',
 								issuer: 'https://42crunch.com',
 								subject: subject,
-								expiresIn: "30m",
+								expiresIn: "4w",
 								audience: 'pixiUsers'
 							});
 							res.status(200).json({ message: "x-access-token", token: token });
