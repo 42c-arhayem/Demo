@@ -52,7 +52,7 @@ jobs:
             -e X42C_JSON_REPORT=audit-action-report-${{ github.run_id }}.json \
             42crunch/docker-api-security-audit:v3
 
-      # Fetch Bank API UUID from the Audit Summary Report
+      # Fetch Pixi API UUID from the Audit Summary Report
       - name: Check Audit Summary Report
         id: Check_Audit
         run: |
@@ -62,7 +62,7 @@ jobs:
           echo "PIXI API UUID: $apiId"
           echo "::set-output name=API_UUID::$apiId"
 
-      # Fetch Bank API AliasId from the .42c/conf.yaml
+      # Fetch Pixi API AliasId from the .42c/conf.yaml
       - name: Fetch API AliasId
         id: Fetch_API_AliasId
         run: |
