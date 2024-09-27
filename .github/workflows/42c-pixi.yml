@@ -87,7 +87,7 @@ jobs:
           echo "Scan token is $scan_token"
           cat ${{ github.workspace }}/scan_token.json
 
-      # Pull and Run 42Crunch Docker Image
+      # Pull and Run 42Crunch Scan Docker Image
       - name: Pull and Run 42Crunch Docker Image
         run: |
           echo "Scan token is $SCAN_TOKEN"
