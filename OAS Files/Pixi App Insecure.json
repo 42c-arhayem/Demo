@@ -66,7 +66,8 @@
                                       "x-42c-format": "o:email"
                                     },
                                     "pass": {
-                                      "type": "string"
+                                      "type": "string",
+                                      "format": "unknown"
                                     }
                                 }
                             }
