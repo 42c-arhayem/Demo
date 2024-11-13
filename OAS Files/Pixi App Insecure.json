@@ -66,7 +66,13 @@
                                       "x-42c-format": "o:email"
                                     },
                                     "pass": {
-                                      "type": "string"
+                                      "type": "string",
+                                      "format": "o:common:password",
+                                      "example": "C3a@52Yp",
+                                      "pattern": "^[a-zA-Z0-9&@#!?]{8,64}$",
+                                      "minLength": 8,
+                                      "maxLength": 64,
+                                      "x-42c-format": "o:common:password"
                                     }
                                 }
                             }
