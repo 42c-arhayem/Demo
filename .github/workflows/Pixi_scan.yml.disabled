@@ -1,0 +1,58 @@
+name: Pixi Scan
+
+on:
+  workflow_run:
+    workflows: ["Pixi Audit"]
+    types:
+      - completed
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+
+    env:
+      platformUrl: 'https://demolabs.42crunch.cloud'
+      platformService: 'services.demolabs.42crunch.cloud:8001'
+      X42C_API_TOKEN: ${{ secrets.API_TOKEN }}
+      API_URL: 'https://photo-demo.westeurope.cloudapp.azure.com/ali/api'
+
+    steps:
+      - name: Download Audit Outputs
+        uses: actions/download-artifact@v3
+        with:
+          name: audit-outputs
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install requests --upgrade pip
+
+      - name: Upload Scan Configuration and Fetch Token
+        id: upload_scan_config
+        run: |
+          audit_json_path="${{ github.workspace }}/audit-action-report-${{ github.run_id }}.json"
+          conf_yaml_path="${{ github.workspace }}/.42c/conf.yaml"
+          apiId=$(cat $audit_json_path | jq -r '.audit.report["OAS Files/Pixi App Good Scan.json"].apiId')
+          aliasId=$(yq '.apis.["OAS Files/Pixi App Good Scan.json"].alias' < $conf_yaml_path)
+
+          python3 ${{ github.workspace }}/scripts/conformance_scanv2.py \
+            -c ${{ secrets.API_TOKEN }} \
+            -p ${{ env.platformUrl }} \
+            -a $apiId \
+            -t scan_token.json \
+            -f ${{ github.workspace }}/.42c/scan/$aliasId/scanconf.json --action upload_conf
+          scan_token=$(cat ${{ github.workspace }}/scan_token.json | jq -r '.scan_token')
+          echo "SCAN_TOKEN=$scan_token" >> $GITHUB_ENV
+
+      - name: Pull and Run 42Crunch Docker Image
+        run: |
+          docker pull 42crunch/scand-agent:v2
+          docker run -e SCAN_TOKEN=$SCAN_TOKEN \
+            -e SCAN42C_HOST=${{ env.API_URL }} \
+            -e PLATFORM_SERVICE=${{ env.platformService }} \
+            42crunch/scand-agent:v2
+          echo "Scan report: ${{ env.platformUrl }}/apis/$apiId/scan"

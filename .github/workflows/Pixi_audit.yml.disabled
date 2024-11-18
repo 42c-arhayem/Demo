@@ -1,0 +1,66 @@
+name: Pixi Audit
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+
+    env:
+      platformUrl: 'https://demolabs.42crunch.cloud'
+      X42C_API_TOKEN: ${{ secrets.API_TOKEN }} # Use GitHub Secrets
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install requests --upgrade pip
+
+      - name: Run 42Crunch Audit Docker Image
+        run: |
+          docker run -v "${{ github.workspace }}:/workspace" \
+            --user 0:0 \
+            -e X42C_REPOSITORY_URL=https://github.com/42c-arhayem/Demo \
+            -e X42C_PLATFORM_URL=${{ env.platformUrl }} \
+            -e X42C_API_TOKEN=${{ env.X42C_API_TOKEN }} \
+            -e X42C_BRANCH_NAME=main \
+            -e X42C_LOG_LEVEL=DEBUG \
+            -e X42C_JSON_REPORT=audit-action-report-${{ github.run_id }}.json \
+            42crunch/docker-api-security-audit:v3
+
+      - name: Check Audit Summary Report
+        id: Check_Audit
+        run: |
+          cat ${{ github.workspace }}/audit-action-report-${{ github.run_id }}.json
+          apiId=$(cat ${{ github.workspace }}/audit-action-report-${{ github.run_id }}.json | jq -r '.audit.report["OAS Files/Pixi App Good Scan.json"].apiId')
+          echo "::set-output name=API_UUID::$apiId"
+
+      - name: Fetch API AliasId
+        id: Fetch_API_AliasId
+        run: |
+          aliasId=$(yq '.apis.["OAS Files/Pixi App Good Scan.json"].alias' < ${{ github.workspace }}/.42c/conf.yaml)
+          echo "::set-output name=API_ALIAS_ID::$aliasId"
+
+      - name: Save API UUID and AliasId for Scan
+        uses: actions/upload-artifact@v3
+        with:
+          name: audit-outputs
+          path: |
+            ${{ github.workspace }}/audit-action-report-${{ github.run_id }}.json
+            ${{ github.workspace }}/.42c/conf.yaml
