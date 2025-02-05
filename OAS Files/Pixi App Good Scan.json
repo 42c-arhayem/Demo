@@ -35,6 +35,7 @@
             "description": "operations related to picture management"
         }
     ],
+    "x-42c-accept-empty-security": true,
     "paths": {
         "/user/login": {
             "post": {
