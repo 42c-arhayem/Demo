@@ -67,11 +67,7 @@
                                     },
                                     "pass": {
                                       "type": "string",
-                                      "format": "o:common:password",
-                                      "example": "C3a@52Yp",
-                                      "pattern": "^[a-zA-Z0-9&@#!?]{8,64}$",
-                                      "minLength": 8,
-                                      "maxLength": 64
+                                      "format": "o:common:password"
                                     }
                                 }
                             }
